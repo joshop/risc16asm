@@ -50,6 +50,7 @@ def base_parse_line(line: str) -> list[int]:
         dword = parse_const(args[0], 32)
         return [(dword & 0xFFFF0000) >> 16, dword & 0xFFFF]
 
+    # Unmatched .macro (should get caught by program parser)
     if op == ".macro":
         raise SyntaxError("parse_line: .macro does not have matching .endmacro")
 
