@@ -2,8 +2,6 @@
   Assembler for our 16-bit risc-based assembly
 */
 
-#include "common.h"
-#include "types.h"
 #include "utils.h"
 
 using namespace std;
