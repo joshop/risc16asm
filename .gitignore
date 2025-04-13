@@ -1,0 +1,9 @@
+# vscode settings
+.vscode/
+
+# Compiled binaries produced by assembler
+src/**/*.exe
+src/**/*.out
+
+# Python
+src/**/__pycache__
