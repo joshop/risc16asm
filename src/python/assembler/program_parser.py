@@ -4,7 +4,7 @@ program_parser.py
 Parse a full program into machine code.
 """
 
-from base_parser import base_parse_line
+from base_inst_parser import base_parse_line
 
 
 def program_parser(prog: str) -> list[int]:

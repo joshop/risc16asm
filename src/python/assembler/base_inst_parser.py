@@ -5,7 +5,7 @@ Parse standalone lines (non-pseudoinstructions, fill directives, etc.)
 """
 
 import re
-from utils import parse_const
+from python.utils import parse_const
 
 OPCODE_DICT = {
     "imm": ["addi", "nandi"],
