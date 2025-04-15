@@ -15,11 +15,8 @@ def parse_const(s: str, width: int) -> int:
     1. Excess bits get truncated from the left.
     2. We use stoi, so we stop at invalid chars.
     """
-    assert width in [8, 16], "parse_const: bit width must be 8 or 16"
-    if width == 8:
-        mask = 0xFF
-    elif width == 16:
-        mask = 0xFFFF
+    # Select lowest `width` bits
+    mask = (1 << width) - 1
 
     # Match hexadecimal strings
     hex_match = re.fullmatch(r"(?:0x|\$)([a-fA-F0-9]+)", s)
