@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class iTypeImm(Enum):
+class iTypeImm:
     """
     Enum for inst[15:14] to detect imm-type instructions
     """
@@ -10,7 +10,7 @@ class iTypeImm(Enum):
     NANDI = 0b11
 
 
-class iType(Enum):
+class iType:
     """
     Enum for inst[15:11] to detect most other instructions
     """
