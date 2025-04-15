@@ -109,6 +109,9 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
                     # Python magic takes care of this :O
                     rf[rd] = rf[rs] - rf[ro]
 
+        case iType.XOR:
+            rf[rd] = rf[rs] ^ rf[ro]
+
         case iType.SHIFT:
             shamt = inst & 0b1111
             sd = (inst & (0b1 << 4)) >> 4
@@ -116,9 +119,6 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
                 rf[rd] = rf[rs] << shamt
             else:
                 rf[rd] = rf[rs] >> shamt
-
-        case iType.XOR:
-            rf[rd] = rf[rs] ^ rf[ro]
 
         case iType.JUMP:
             rf[rd] = pc + 1

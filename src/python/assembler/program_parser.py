@@ -14,9 +14,6 @@ def program_parser(prog: str) -> list[int]:
 
     mem = [0] * (1 << 16)
 
-    # TODO: Evaluate macros
-    pass
-
     # Store .def directives
     vars = {}
 
@@ -29,6 +26,12 @@ def program_parser(prog: str) -> list[int]:
     # Parse lines one by one
     lines = prog.split("\n")
     for line_idx, line in enumerate(lines):
+        # Handle following directives:
+        #   .def (TODO)
+        #   .addr (TODO)
+        #   .bin (TODO)
+        #   .macro (TODO)
+
         try:
             words = base_parse_line(line)
         except Exception as e:
