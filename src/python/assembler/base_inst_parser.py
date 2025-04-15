@@ -71,8 +71,7 @@ def base_parse_line(line: str, labels: dict, cur_addr: int) -> list[int]:
 
     # Unmatched .macro (should get caught by program parser)
     if op == ".macro":
-        raise SyntaxError(
-            "parse_line: .macro not closed by matching .endmacro")
+        raise SyntaxError("parse_line: .macro not closed by matching .endmacro")
 
     # Regular opcode
     if op in BASE_OPCODES:
@@ -156,8 +155,7 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
                 "sl": 0,
                 "sr": 1,
             }[op]
-            inst_bin = (iType.SHIFT << 11) + (rs << 8) + \
-                (rd << 5) + (sd << 4) + shamt
+            inst_bin = (iType.SHIFT << 11) + (rs << 8) + (rd << 5) + (sd << 4) + shamt
             return inst_bin
 
         case OPCODES.JUMP:
@@ -182,4 +180,27 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
                 "bp": iType.BR_BP,
                 "bnp": iType.BR_BNP,
             }[op]
+            return inst_bin
+
+        case OPCODES.LOAD:
+            assert len(args) == 2, f"Expected 2 args for {op} instruction"
+            rd = reg_idx(args[0])
+            addr = re.match("(.+)\(.+\)")
+            offset, rs = parse_const(addr[0]), reg_idx(addr[1])
+
+            imm = encode_const(offset, 5)
+            inst_bin = (iType.LOAD << 11) + (rs << 8) + (rd << 5) + imm
+
+        case OPCODES.STORE:
+            assert len(args) == 2, f"Expected 2 args for {op} instruction"
+            ro = reg_idx(args[0])
+            addr = re.match("(.+)\(.+\)")
+            offset, rs = parse_const(addr[0]), reg_idx(addr[1])
+
+            imm = encode_const(offset, 5)
+            imm_hi = (imm & (0b111 << 2)) >> 2
+            imm_lo = imm & 0b11
+            inst_bin = (
+                (iType.STORE << 11) + (rs << 8) + (imm_hi << 5) + (ro << 2) + imm_lo
+            )
             return inst_bin
