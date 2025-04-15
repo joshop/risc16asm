@@ -1,6 +1,18 @@
 import re
 
 
+def parse_imm(imm: int, width: int) -> int:
+    # Parse x as a signed integer with width `width`
+    # Used by interpreter
+    assert width > 0, f"encode_imm: nonzero width {width}"
+    assert imm >= 0, f"parse_imm: expected nonnegative imm, got {imm}"
+    assert imm < (1 << width), f"parse_imm: imm {imm} does not fit in {width} bits"
+
+    if imm & (1 << (width - 1)):
+        return imm - (1 << width)
+    return imm
+
+
 def parse_const(s: str, width: int) -> int:
     """
     Convert string constants like "42", "-1", "0xf8", "0b1001"
@@ -40,3 +52,4 @@ def encode_const(imm: int, width: int) -> int:
 if __name__ == "__main__":
     # Minimal tests
     assert parse_const("0xbeef", 16) == 0xBEEF
+    assert parse_imm(0b11111111, 8) == -1

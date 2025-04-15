@@ -7,10 +7,10 @@ Parse a full program into machine code.
 import re
 
 from utils import parse_const
-from base_inst_parser import base_parse_line
+from .base_inst_parser import base_parse_line
 
 
-def program_parser(prog: str) -> list[int]:
+def assemble_program(prog: str) -> list[int]:
     """
     Parses a full program and emits the contents of memory.
     """
@@ -107,10 +107,11 @@ def program_parser(prog: str) -> list[int]:
 
 
 if __name__ == "__main__":
+
     with open("./scripts/test_1.asm") as fin:
         prog = fin.read()
 
-    mem = program_parser(prog)
+    mem = assemble_program(prog)
     for word in mem:
         print(f"{word:016b}")
 
