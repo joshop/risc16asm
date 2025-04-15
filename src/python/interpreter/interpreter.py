@@ -69,11 +69,11 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
     op5 = (inst & (0b11111 << 11)) >> 11
     op2 = inst & (0b11)
 
-    imm_imm = ((inst & (0b111 << 11)) >> 6) + (inst & (0b11111))
-    imm_lui = ((inst & (0b111 << 8)) >> 3) + (inst & 0b11111)
-    imm_br = inst & 0b11111111
-    imm_load = inst & 0b11111
-    imm_store = ((inst & (0b111 << 5)) >> 3) + (inst & 0b11)
+    imm_imm = parse_imm(((inst & (0b111 << 11)) >> 6) + (inst & (0b11111)), 8)
+    imm_lui = parse_imm(((inst & (0b111 << 8)) >> 3) + (inst & 0b11111), 8)
+    imm_br = parse_imm(inst & 0b11111111, 8)
+    imm_load = parse_imm(inst & 0b11111, 5)
+    imm_store = parse_imm(((inst & (0b111 << 5)) >> 3) + (inst & 0b11), 5)
 
     # IMM-TYPE
     if op_imm in [iTypeImm.ADDI, iTypeImm.NANDI]:

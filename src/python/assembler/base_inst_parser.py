@@ -7,7 +7,7 @@ Parse standalone lines (non-pseudoinstructions, fill directives, etc.)
 import re
 from enum import Enum
 
-from utils import parse_const
+from utils import parse_const, encode_const
 from inst_types import iType, iTypeImm
 
 
@@ -35,15 +35,19 @@ OPCODE_DICT = {
 BASE_OPCODES = sum(OPCODE_DICT.values(), [])
 
 
-def base_parse_line(line: str) -> list[int]:
+def base_parse_line(line: str, labels: dict, cur_addr: int) -> list[int]:
     """
     Method to parse location-independent instructions/directives:
         - .word
         - .dword
         - native opcodes
     """
+    assert isinstance(line, str)
+    assert isinstance(labels, dict)
+    assert isinstance(cur_addr, int)
+
     # Remove comments
-    line = line.split("//", 1)[0]
+    line = line.split("//", 1)[0].strip()
     if len(line) == 0:
         return []
 
@@ -67,12 +71,13 @@ def base_parse_line(line: str) -> list[int]:
 
     # Unmatched .macro (should get caught by program parser)
     if op == ".macro":
-        raise SyntaxError("parse_line: .macro does not have matching .endmacro")
+        raise SyntaxError(
+            "parse_line: .macro not closed by matching .endmacro")
 
     # Regular opcode
     if op in BASE_OPCODES:
         try:
-            return [parse_base_inst(op, args)]
+            return [parse_base_inst(op, args, labels, cur_addr)]
         except Exception as e:
             print(f"parse_line: could not parse instruction '{line}':")
             raise e
@@ -87,7 +92,11 @@ def reg_idx(reg_name: str):
     return reg_names.index(reg_name)
 
 
-def parse_base_inst(op, args) -> int:
+def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
+    """
+    Parse a base instruction like addi, lui, sub, sl, bz.
+    Branch instructions require special care, hence `labels` and `cur_addr` dicts.
+    """
     match op:
         case OPCODES.IMM:
             assert len(args) == 3, f"Expected 3 args for {op} instruction"
@@ -100,7 +109,6 @@ def parse_base_inst(op, args) -> int:
                 inst_bin += iTypeImm.ADDI << 14
             elif op == "nandi":
                 inst_bin += iTypeImm.NANDI << 14
-
             return inst_bin
 
         case OPCODES.LUI:
@@ -127,25 +135,51 @@ def parse_base_inst(op, args) -> int:
                 "sub": 0b10,  # or 0b11
             }[op]
             inst_bin = (rs << 8) + (rd << 5) + (ro << 2) + op2
-            if op in ["nand", "and", "nor", "or"]:
-                inst_bin += iType.LOGICAL << 11
-            elif op in ["xor"]:
-                inst_bin += iType.XOR << 11
-            elif op in ["add", "sub"]:
-                inst_bin += iType.ADDSUB << 11
-            else:
-                raise SyntaxError(f"Unexpected opcode {op}")
+
+            match op:
+                case ["nand", "and", "nor", "or"]:
+                    inst_bin += iType.LOGICAL << 11
+                case ["xor"]:
+                    inst_bin += iType.XOR << 11
+                case ["add", "sub"]:
+                    inst_bin += iType.ADDSUB << 11
+                case _:
+                    raise SyntaxError(f"Unexpected opcode {op}")
+            return inst_bin
 
         case OPCODES.ALU_SH:
             assert len(args) == 2, f"Expected 3 args for {op} instruction"
             rd, rs = map(reg_idx, args[:2])
             shamt = parse_const(args[2])
 
-            if op == "sl":
-                sd = 0
-            elif op == "sr":
-                sd = 1
-            else:
-                raise SyntaxError(f"Unexpected opcode {op}")
+            sd = {
+                "sl": 0,
+                "sr": 1,
+            }[op]
+            inst_bin = (iType.SHIFT << 11) + (rs << 8) + \
+                (rd << 5) + (sd << 4) + shamt
+            return inst_bin
 
-            inst_bin = (iType.SHIFT << 11) + (rs << 8) + (rd << 5) + (sd << 4) + shamt
+        case OPCODES.JUMP:
+            return (rs << 8) + (rd << 5)
+
+        case OPCODES.BR:
+            assert len(args) == 2, f"Expected 2 args for {op} instruction"
+            rs = reg_idx(args[0])
+            label = args[1]
+
+            # Figure out the immediate
+            if not label in labels:
+                raise NameError(f"Label '{label}' not found")
+
+            offset = labels[label] - cur_addr
+            imm = encode_const(offset, 8)
+
+            inst_bin = (rs << 8) + imm
+            inst_bin += {
+                "bz": iType.BR_BZ,
+                "bnz": iType.BR_BNZ,
+                "bp": iType.BR_BP,
+                "bnp": iType.BR_BNP,
+            }[op]
+            return inst_bin
