@@ -1,1 +1,1 @@
-addi r1, r1, 0
+addi r1, r1, 1

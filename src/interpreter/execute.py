@@ -4,9 +4,14 @@ execute.py
 Takes in memory and executes a single instruction in it.
 """
 
+import os
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+
 from inst_types import iTypeImm, iType
 from utils import parse_imm
-from interpreter.reg_file import RegFile
+from reg_file import RegFile
 
 
 def execute(pc: int, rf: RegFile, mem: list[int]):
@@ -22,7 +27,7 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
         print(f"execute: accessed out-of-bounds memory at pc=0x{pc:04x}")
 
     inst = mem[pc]
-    next_pc = pc  # Default next pc
+    next_pc = pc + 1  # Default next pc
 
     # Universal: rs, ro, rd
     # TODO: make a Bits class for better indexing
@@ -52,7 +57,7 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
         elif op_imm == iTypeImm.NANDI:
             # nandi
             rf[rd] = ~(rf[rs] & imm_imm)
-        return
+        return next_pc
 
     # Everything else
     match op5:
