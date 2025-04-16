@@ -45,10 +45,23 @@ def assemble_program(prog: str) -> list[int]:
 
         # Split line
         try:
-            op, args = re.split(r"\s+", line, 1)
-            args = re.split(r",\s*", args)
+            # Is it a label?
+            label_match = re.fullmatch("(\w+):", line)
+            if label_match:
+                label = label_match.group(1)
+                labels[label] = cur_addr
+                line_idx += 1
+                continue
+
+            else:
+                # Regular instruction
+                op, args = re.split(r"\s+", line, 1)
+                args = re.split(r",\s*", args)
+
         except Exception as e:
-            raise SyntaxError("parse_line: could not parse line in initial split")
+            raise SyntaxError(
+                f"Could not parse line '{lines[line_idx]}' at line {line_idx}: {e}"
+            )
 
         match op:
             case ".word":
@@ -96,15 +109,17 @@ def assemble_program(prog: str) -> list[int]:
         try:
             words = base_parse_line(op, args, labels, addr)
         except Exception as e:
-            print(f"Error at line {line_idx}: {e}")
+            print(f"Error assembling '{lines[line_idx]}' at line {line_idx}")
             raise e
 
-        print(op, args, line_idx, addr)
+        print(
+            f"line {line_idx:>5} | addr 0x{addr:04x} | op {op:>8} | args {', '.join(args)}"
+        )
         max_addr = max(max_addr, addr)
 
         # Fill in next memory addresses
         for i, w in enumerate(words):
-            assert isinstance(w, int), f"base_parse_line returned invalid word '{w}'"
+            assert isinstance(w, int), f"Returned invalid word '{w}'"
             if addr + i >= 1 << 16:
                 raise IndexError(f"Could not write to mem addr {addr + i}")
             mem[addr + i] = w
@@ -115,7 +130,7 @@ def assemble_program(prog: str) -> list[int]:
 if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
     test_path = os.path.join(script_dir, "..", "scripts", "test_1.asm")
-    
+
     with open(test_path) as fin:
         prog = fin.read()
 

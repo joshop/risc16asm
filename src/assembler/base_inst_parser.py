@@ -16,7 +16,7 @@ from utils import parse_const, encode_const
 from inst_types import iType, iTypeImm
 
 
-class OPCODES(Enum):
+class OPCODES:
     IMM = ["addi", "nandi"]
     LUI = ["lui"]
     ALU_AL = ["nand", "and", "nor", "or", "add", "sub"]
@@ -37,7 +37,7 @@ OPCODE_DICT = {
     "load": OPCODES.LOAD,
     "store": OPCODES.STORE,
 }
-BASE_OPCODES = sum([x.value for x in OPCODE_DICT.values()], [])
+BASE_OPCODES = sum(OPCODE_DICT.values(), [])
 
 
 def base_parse_line(op: str, args: list, labels: dict, cur_addr: int) -> list[int]:
@@ -88,7 +88,7 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
     Parse a base instruction like addi, lui, sub, sl, bz.
     Branch instructions require special care, hence `labels` and `cur_addr` dicts.
     """
-    if op in OPCODES.IMM.value:
+    if op in OPCODES.IMM:
         assert len(args) == 3, f"Expected 3 args for {op} instruction"
         rd, rs = map(reg_idx, args[:2])
         imm = parse_const(args[2], 8)

@@ -35,24 +35,20 @@ def main():
     else:
         output_file = args.output
 
-    try:
-        # Parse the assembly file
-        with open(args.input_file) as fin:
-            prog = fin.read()
-        binary_code = assemble_program(prog)
+    # Parse the assembly file
+    # Exceptions will pass through
+    with open(args.input_file) as fin:
+        prog = fin.read()
+    binary_code = assemble_program(prog)
 
-        # Write the binary code to the output file
-        with open(output_file, "wb") as f:
-            for word in binary_code:
-                f.write(word.to_bytes(2, "little"))
+    # Write the binary code to the output file
+    with open(output_file, "wb") as f:
+        for word in binary_code:
+            f.write(word.to_bytes(2, "little"))
 
-        print(
-            f"Successfully assembled {args.input_file} -> {output_file} ({len(binary_code)} words)"
-        )
-
-    except Exception as e:
-        print(f"Error during assembly: {e}")
-        sys.exit(1)
+    print(
+        f"Successfully assembled {args.input_file} -> {output_file} ({len(binary_code)} words)"
+    )
 
 
 if __name__ == "__main__":
