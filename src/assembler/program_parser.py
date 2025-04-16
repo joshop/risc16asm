@@ -26,6 +26,7 @@ def assemble_program(prog: str) -> list[int]:
     #   - figure out instruction widths
 
     cur_addr = 0
+    max_addr = 0
     vars = {}  # figure out label addresses
     labels = {}  # store .def directives
     base_insts = []  # store (op, args, line_idx, addr)
@@ -96,6 +97,7 @@ def assemble_program(prog: str) -> list[int]:
             raise e
 
         print(op, args, line_idx, addr)
+        max_addr = max(max_addr, addr)
 
         # Fill in next memory addresses
         for i, w in enumerate(words):
@@ -104,7 +106,7 @@ def assemble_program(prog: str) -> list[int]:
                 raise IndexError(f"Could not write to mem addr {addr + i}")
             mem[addr + i] = w
 
-    return mem
+    return mem[: (max_addr + 1)]
 
 
 if __name__ == "__main__":

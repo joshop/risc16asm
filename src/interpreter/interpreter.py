@@ -28,8 +28,6 @@ class Interpreter:
         assert len(prog) % 2 == 0, f"Expected even number of bytes, got {len(prog)}"
 
         for byte_idx in range(0, len(prog), 2):
-            if byte_idx % 16 == 0:
-                print(byte_idx // 2)
             word = int.from_bytes(prog[byte_idx : byte_idx + 2], "little")
             self.mem[byte_idx // 2] = word
 

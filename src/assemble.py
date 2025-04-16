@@ -43,7 +43,9 @@ def main():
             for word in binary_code:
                 f.write(word.to_bytes(2, "little"))
 
-        print(f"Successfully assembled {args.input_file} -> {output_file}")
+        print(
+            f"Successfully assembled {args.input_file} -> {output_file} ({len(binary_code)} words)"
+        )
 
     except Exception as e:
         print(f"Error during assembly: {e}")
