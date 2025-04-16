@@ -7,7 +7,7 @@ Parse standalone lines (non-pseudoinstructions, fill directives, etc.)
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import re
 from enum import Enum
@@ -176,7 +176,7 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
     if op in OPCODES.LOAD:
         assert len(args) == 2, f"Expected 2 args for {op} instruction"
         rd = reg_idx(args[0])
-        addr = re.match("(.+)\(.+\)")
+        addr = re.match(r"(.+)\(.+\)")
         offset, rs = parse_const(addr[0]), reg_idx(addr[1])
 
         imm = encode_const(offset, 5)
@@ -185,7 +185,7 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
     if op in OPCODES.STORE:
         assert len(args) == 2, f"Expected 2 args for {op} instruction"
         ro = reg_idx(args[0])
-        addr = re.match("(.+)\(.+\)")
+        addr = re.match(r"(.+)\(.+\)")
         offset, rs = parse_const(addr[0]), reg_idx(addr[1])
 
         imm = encode_const(offset, 5)

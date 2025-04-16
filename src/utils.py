@@ -25,18 +25,18 @@ def parse_const(s: str, width: int) -> int:
     mask = (1 << width) - 1
 
     # Match hexadecimal strings
-    hex_match = re.fullmatch(r"(?:0x|\$)([a-fA-F0-9]+)", s)
+    hex_match = re.fullmatch(r"(?:0x|\$)([a-fA-F0-9_]+)", s)
     if hex_match:
-        return int(hex_match.group(1), 16) & mask
+        return int(hex_match.group(1).replace("_", ""), 16) & mask
 
     # Match binary strings
-    bin_match = re.fullmatch(r"(?:0b|%)([a-fA-F0-9]+)", s)
+    bin_match = re.fullmatch(r"(?:0b|%)([a-fA-F0-9_]+)", s)
     if bin_match:
-        return int(bin_match.group(1), 2) & mask
+        return int(bin_match.group(1).replace("_", ""), 2) & mask
 
     # Assume decimal string
     assert re.fullmatch(r"\d+", s), "parse_const: const is not decimal"
-    return int(s) & mask
+    return int(s.replace("_", "")) & mask
 
 
 def encode_const(imm: int, width: int) -> int:

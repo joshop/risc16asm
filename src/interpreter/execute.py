@@ -7,11 +7,10 @@ Takes in memory and executes a single instruction in it.
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from inst_types import iTypeImm, iType
 from utils import parse_imm
-from reg_file import RegFile
+from interpreter.reg_file import RegFile
 
 
 def execute(pc: int, rf: RegFile, mem: list[int]):
@@ -53,7 +52,7 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
     if op_imm in [iTypeImm.ADDI, iTypeImm.NANDI]:
         if op_imm == iTypeImm.ADDI:
             # addi
-            rf[rd] = rf[rs] + imm_imm
+            rf[rd] = (rf[rs] + imm_imm) & 0xFFFF
         elif op_imm == iTypeImm.NANDI:
             # nandi
             rf[rd] = ~(rf[rs] & imm_imm)
@@ -78,10 +77,10 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
         case iType.ADDSUB:
             match op2:
                 case 0b00, 0b01:
-                    rf[rd] = rf[rs] + rf[ro]
+                    rf[rd] = (rf[rs] + rf[ro]) & 0xFFFF
                 case 0b10, 0b11:
                     # Python magic takes care of this :O
-                    rf[rd] = rf[rs] - rf[ro]
+                    rf[rd] = (rf[rs] - rf[ro]) & 0xFFFF
 
         case iType.XOR:
             rf[rd] = rf[rs] ^ rf[ro]

@@ -1,5 +1,10 @@
-from reg_file import RegFile
-from execute import execute
+import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from interpreter.reg_file import RegFile
+from interpreter.execute import execute
 
 
 class Interpreter:
@@ -12,13 +17,16 @@ class Interpreter:
         self.pc = 0
 
     def dump_state(self):
+        """
+        Return a formatted string containing pc and contents of registers.
+        """
         reg_str = ", ".join([f"r{i}=0x{self.rf[i]:04x}" for i in range(8)])
-        return f"pc=0x{self.pc:04x} {reg_str}"
+        return f"pc=0x{self.pc:04x} | {reg_str}"
 
     def load_program(self, prog: bytes | str):
         """
         Load machine code into the program.
-            prog: a sequence of an even number of bytes, or filename
+            prog: a sequence of bytes, or filename
         """
         if isinstance(prog, str):
             with open(prog, "rb") as fin:
@@ -32,14 +40,8 @@ class Interpreter:
             self.mem[byte_idx // 2] = word
 
     def step(self):
+        """
+        Execute the instruction at mem[pc] and advance pc
+        """
         next_pc = execute(self.pc, self.rf, self.mem)
         self.pc = next_pc
-
-
-if __name__ == "__main__":
-    interp = Interpreter()
-    interp.load_program("./scripts/test_1.bin")
-
-    while True:
-        interp.step()
-        print(interp.dump_state())

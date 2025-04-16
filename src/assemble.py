@@ -5,11 +5,14 @@ Usage:
     python assemble.py <asesmbly_file.asm> [-o <machine_code.asm>]
 """
 
-import sys
 import os
+import sys
+
+sys.path.append(os.path.dirname(__file__))
+
 import argparse
 
-from assembler.program_parser import assemble_program
+from assembler.assemble_program import assemble_program
 
 
 def main():

@@ -5,9 +5,12 @@ Parse a full program into machine code.
 """
 
 import re
+import os
+import sys
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils import parse_const
-from .base_inst_parser import base_parse_line
+from assembler.base_inst_parser import base_parse_line
 
 
 def assemble_program(prog: str) -> list[int]:
@@ -110,8 +113,10 @@ def assemble_program(prog: str) -> list[int]:
 
 
 if __name__ == "__main__":
-
-    with open("./scripts/test_1.asm") as fin:
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    test_path = os.path.join(script_dir, "..", "scripts", "test_1.asm")
+    
+    with open(test_path) as fin:
         prog = fin.read()
 
     mem = assemble_program(prog)
