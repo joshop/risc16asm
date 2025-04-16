@@ -13,6 +13,7 @@ from .base_inst_parser import base_parse_line
 def assemble_program(prog: str) -> list[int]:
     """
     Parses a full program and emits the contents of memory.
+        prog: assembly program
     """
     mem = [0] * (1 << 16)
 

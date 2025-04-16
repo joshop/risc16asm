@@ -23,7 +23,7 @@ def main():
     # Check if input file exists
     if not os.path.isfile(args.input_file):
         print(f"Error: Input file '{args.input_file}' does not exist")
-        sys.exit(1)
+        exit(1)
 
     # Determine output file name if not specified
     if args.output is None:
@@ -43,7 +43,7 @@ def main():
             for word in binary_code:
                 f.write(word.to_bytes(2, "little"))
 
-        print(f"Successfully assembled '{args.input_file}' to '{output_file}'")
+        print(f"Successfully assembled {args.input_file} -> {output_file}")
 
     except Exception as e:
         print(f"Error during assembly: {e}")
