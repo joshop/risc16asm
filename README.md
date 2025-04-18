@@ -1,4 +1,36 @@
-# Assembly Format
+# RISC-16
+
+Assembler and emulator for a custom 16-bit instruction set.
+
+## Usage
+
+### Assembly
+
+Suppose we have assembly code in `scripts/test_1.asm`. To assemble it into machine code:
+
+```sh
+python src/assemble.py scripts/test_1.asm [-o <output_file>]
+```
+
+If no output file is specified, it will default to `<basename>.bin`.
+
+### Emulation
+
+If the machine code is in `scripts/test_1.bin`, emulate it using
+
+```sh
+python src/interpret.py scripts/test_1.bin
+```
+
+### All-in-one
+
+To do it all in one step, run
+
+```sh
+python src/run.py scripts/test_1.asm
+```
+
+## Assembly format
 
 A program consists of a sequence of the following separated by newlines:
 
