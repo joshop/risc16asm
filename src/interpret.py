@@ -39,6 +39,10 @@ def main():
             print(f"cycle {cycle:>10d} |", interp.dump_state())
             cycle += 1
 
+            # Break if encounger `bz r0, <zero offset>`
+            if interp.mem[interp.pc] == 0b00100_000_00000000:
+                break
+
     except Exception as e:
         print(f"Error during execution: {e}")
         sys.exit(1)

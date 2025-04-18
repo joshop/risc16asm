@@ -45,6 +45,7 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
     imm_imm = parse_imm(((inst & (0b111 << 11)) >> 6) + (inst & (0b11111)), 8)
     imm_lui = parse_imm(((inst & (0b111 << 8)) >> 3) + (inst & 0b11111), 8)
     imm_br = parse_imm(inst & 0b11111111, 8)
+    print(f"imm br bin = {inst & 0b11111111}, imm_br={imm_br}")
     imm_load = parse_imm(inst & 0b11111, 5)
     imm_store = parse_imm(((inst & (0b111 << 5)) >> 3) + (inst & 0b11), 5)
 
