@@ -4,6 +4,7 @@
 # Compiled binaries produced by assembler
 src/**/*.exe
 src/**/*.out
+src/**/*.bin
 
 # Python
-src/**/__pycache__
+**/__pycache__/

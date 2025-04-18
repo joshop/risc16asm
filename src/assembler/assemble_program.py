@@ -128,10 +128,7 @@ def assemble_program(prog: str) -> list[int]:
 
 
 if __name__ == "__main__":
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    test_path = os.path.join(script_dir, "..", "scripts", "test_1.asm")
-
-    with open(test_path) as fin:
+    with open("./scripts/test_1.asm") as fin:
         prog = fin.read()
 
     mem = assemble_program(prog)
