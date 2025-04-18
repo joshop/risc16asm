@@ -21,7 +21,7 @@ class Interpreter:
         Return a formatted string containing pc and contents of registers.
         """
         reg_str = ", ".join([f"r{i}=0x{self.rf[i]:04x}" for i in range(8)])
-        return f"pc=0x{self.pc:04x} | {reg_str}"
+        return f"pc=0x{self.pc:04x} | 0x{self.mem[self.pc]:04x} | {reg_str}"
 
     def load_program(self, prog: bytes | str):
         """

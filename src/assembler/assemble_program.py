@@ -113,7 +113,7 @@ def assemble_program(prog: str) -> list[int]:
             raise e
 
         print(
-            f"line {line_idx:>5} | addr 0x{addr:04x} | op {op:>8} | {', '.join(args)}"
+            f"line {line_idx:>5} | addr 0x{addr:04x} | op {op:>8} | {', '.join(args):>20} | {words[0]:04x}"
         )
         max_addr = max(max_addr, addr)
 

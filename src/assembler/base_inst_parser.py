@@ -170,7 +170,7 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
             "bnz": iType.BR_BNZ,
             "bp": iType.BR_BP,
             "bnp": iType.BR_BNP,
-        }[op]
+        }[op] << 11
         return inst_bin
 
     if op in OPCODES.LOAD:
