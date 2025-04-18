@@ -2,9 +2,9 @@
 .vscode/
 
 # Compiled binaries produced by assembler
-src/**/*.exe
-src/**/*.out
-src/**/*.bin
+**/*.exe
+**/*.out
+**/*.bin
 
 # Python
 **/__pycache__/
