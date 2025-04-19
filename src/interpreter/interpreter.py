@@ -29,8 +29,10 @@ class Interpreter:
         Return a formatted string containing pc and contents of registers.
             base: 2, 10, or 16 (base to display in)
         """
-        reg_str = " ".join([f"[r{i}={fmt(self.rf[i], base, 5)}]" for i in range(8)])
-        return f"pc={fmt(self.pc, base, 4)} | inst={fmt(self.mem[self.pc], 16, 4)} | {reg_str}"
+        reg_str = " ".join([f"[{fmt(self.rf[i], base)}]" for i in range(8)])
+        return (
+            f"pc={fmt(self.pc, base)} | inst={fmt(self.mem[self.pc], 16)} | {reg_str}"
+        )
 
     def load_program(self, prog: bytes | str):
         """

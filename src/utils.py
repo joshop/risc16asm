@@ -35,7 +35,7 @@ def parse_imm(imm: int, width: int) -> int:
     return imm
 
 
-def format_const(x: int, base: int, width: int = 0):
+def format_const(x: int, base: int):
     """
     Format an integer as fixed width
     """
@@ -43,6 +43,7 @@ def format_const(x: int, base: int, width: int = 0):
     assert x >= 0, f"Constant {x} not nonnegative integer"
 
     # Check that it fits within `width` digits
+    width = {2: 16, 10: 5, 16: 4}[base]
     if width > 0:
         assert x < pow(
             base, width
