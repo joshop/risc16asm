@@ -44,6 +44,8 @@ def main():
         print(interp.dump_state())
         interp.step()
 
+    print(interp.dump_state())
+
 
 if __name__ == "__main__":
     main()

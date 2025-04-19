@@ -117,6 +117,6 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
             rf[rd] = mem[rf[rs] + imm_load]
 
         case iType.STORE:
-            mem[rf[rs] + imm_store] = rf[rd] & 0xFFFF
+            mem[rf[rs] + imm_store] = rf[ro] & 0xFFFF
 
     return next_pc
