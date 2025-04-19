@@ -44,7 +44,13 @@ def assemble_program(prog: str) -> list[int]:
             line_idx += 1
             continue
 
-        # Split line
+        # Handle multiline comments
+        if line.startswith("/*"):
+            while not "*/" in lines[line_idx]:
+                line_idx += 1
+            line_idx += 1
+            continue
+
         try:
             # Is it a label?
             label_match = re.fullmatch("(\w+):", line)
@@ -145,7 +151,7 @@ def assemble_program(prog: str) -> list[int]:
 
         except Exception as e:
             raise SyntaxError(
-                f"Could not parse line '{lines[line_idx]}' at line {line_idx}: {e}"
+                f"Could not parse line '{lines[line_idx]}' at line {line_idx+1}: {e}"
             )
 
     # Pass 2: assemble each line
@@ -153,11 +159,11 @@ def assemble_program(prog: str) -> list[int]:
         try:
             words = base_parse_line(op, args, labels, addr)
         except Exception as e:
-            print(f"Error assembling '{op} {', '.join(args)}' at line {line_idx}")
+            print(f"Error assembling '{op} {', '.join(args)}' at line {line_idx+1}")
             raise e
 
         print(
-            f"line {line_idx:>5} | addr h'{addr:04x} | op {op:>8} | {', '.join(args):<28} | "
+            f"line {line_idx+1:>5} | addr h'{addr:04x} | op {op:>8} | {', '.join(args):<28} | "
             f"h'{words[0]:04x}"
             # f"b'{words[0]:016b}"
         )

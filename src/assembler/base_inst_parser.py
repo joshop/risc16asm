@@ -180,6 +180,9 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
             raise NameError(f"Label '{label}' not found")
 
         offset = labels[label] - cur_addr
+        assert (
+            -128 <= offset < 128
+        ), f"Attempted to branch by too many instructions ({offset})"
         imm = encode_const(offset, 8)
 
         inst_bin = (rs << 8) + imm
@@ -194,17 +197,18 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
     if op in OPCODES.LOAD:
         assert len(args) == 2, f"Expected 2 args for {op} instruction, got {len(args)}"
         rd = reg_idx(args[0])
-        addr = re.match(r"(.+)\(.+\)")
-        offset, rs = parse_const(addr[0]), reg_idx(addr[1])
+        addr = re.fullmatch(r"(.+)\((.+)\)", args[1])
+        offset, rs = parse_const(addr[1], 5), reg_idx(addr[2])
 
         imm = encode_const(offset, 5)
         inst_bin = (iType.LOAD << 11) + (rs << 8) + (rd << 5) + imm
+        return inst_bin
 
     if op in OPCODES.STORE:
         assert len(args) == 2, f"Expected 2 args for {op} instruction, got {len(args)}"
         ro = reg_idx(args[0])
-        addr = re.match(r"(.+)\(.+\)")
-        offset, rs = parse_const(addr[0]), reg_idx(addr[1])
+        addr = re.fullmatch(r"(.+)\((.+)\)", args[1])
+        offset, rs = parse_const(addr[1], 5), reg_idx(addr[2])
 
         imm = encode_const(offset, 5)
         imm_hi = (imm & (0b111 << 2)) >> 2

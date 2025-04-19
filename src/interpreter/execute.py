@@ -23,8 +23,9 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
     assert len(mem) == (1 << 16), "execute: memory must be of size 1<<16"
 
     if not 0 <= pc < (1 << 16):
-        print(f"execute: pc={pc}, accessed out-of-bounds memory at pc=0x{pc:04x}")
-        exit(1)
+        raise IndexError(
+            f"execute: pc={pc}, accessed out-of-bounds memory at pc=0x{pc:04x}"
+        )
 
     inst = mem[pc]
     next_pc = pc + 1  # Default next pc
@@ -116,5 +117,6 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
             rf[rd] = mem[rf[rs] + imm_load]
 
         case iType.STORE:
-            mem[rs + imm_store] = rf[rd] & 0xFFFF
+            mem[rf[rs] + imm_store] = rf[rd] & 0xFFFF
+
     return next_pc
