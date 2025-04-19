@@ -32,6 +32,7 @@ def assemble_program(prog: str) -> list[int]:
     max_addr = 0
     vars = {}  # figure out label addresses
     labels = {}  # store .def directives
+    macros = {}  # match macros to their expanded forms
     base_insts = []  # store (op, args, line_idx, addr)
 
     line_idx = 0
@@ -54,66 +55,112 @@ def assemble_program(prog: str) -> list[int]:
                 continue
 
             else:
-                # Regular instruction
+                # Handle macros
+                is_macro = False
+                for macro_pattern, repl_pattern in macros.items():
+                    if re.fullmatch(macro_pattern, line):
+                        replacement_lines = re.sub(macro_pattern, repl_pattern, line)
+                        is_macro = True
+                        break
+
+                if is_macro:
+                    for line in replacement_lines.split("\n"):
+                        op, args = re.split(r"\s+", line, 1)
+                        args = re.split(r",\s*", args)
+                        base_insts.append([op, args, line_idx, cur_addr])
+                        cur_addr += 1
+
+                    line_idx += 1
+                    continue
+
+                # Regular instruction (not a macro)
                 op, args = re.split(r"\s+", line, 1)
                 args = re.split(r",\s*", args)
+
+                match op:
+                    case ".word":
+                        assert (
+                            len(args) == 1
+                        ), f"Expected 1 arg for .word directive, got {len(args)}"
+                        base_insts.append([op, args, line_idx, cur_addr])
+                        cur_addr += 1
+
+                    case ".dword":
+                        assert (
+                            len(args) == 1
+                        ), f"Expected 1 arg for .dword directive, got {len(args)}"
+                        base_insts.append([op, args, line_idx, cur_addr])
+                        cur_addr += 2
+
+                    case ".def":
+                        assert (
+                            len(args) == 2
+                        ), f"Expected 2 args for .def directive, got {len(args)}"
+                        Y, X = args[0], parse_const(args[1], 16)
+                        vars[Y] = X
+
+                    case ".addr":
+                        assert (
+                            len(args) == 1
+                        ), f"Expected 1 args for .addr directive, got {len(args)}"
+                        X = parse_const(args[0], 16)
+                        cur_addr = X
+
+                    case ".bin":
+                        # TODO
+                        pass
+
+                    case ".include":
+                        # TODO
+                        pass
+
+                    case ".macro":
+                        # Read the entire macro
+                        og_line_idx = line_idx
+                        macro_pattern = line.split(" ", 1)[1]
+                        replacement_lines = []
+
+                        # Get all contents before .endmacro
+                        line_idx += 1
+                        while line_idx < len(lines) and lines[line_idx] != ".endmacro":
+                            replacement_lines.append(lines[line_idx])
+                            line_idx += 1
+
+                        # Reached end of file and have not yet found
+                        if line_idx == len(lines):
+                            raise SyntaxError(
+                                f"No matching .endmacro found for .macro directive on line {og_line_idx}"
+                            )
+
+                        # Save this macro
+                        macros[macro_pattern] = "\n".join(replacement_lines)
+
+                    case _:
+                        # Standard instruction
+                        print(
+                            f"  ADDING STANDARD INST: {[op, args, line_idx, cur_addr]}"
+                        )
+                        base_insts.append([op, args, line_idx, cur_addr])
+                        cur_addr += 1
+
+            # Next line
+            line_idx += 1
 
         except Exception as e:
             raise SyntaxError(
                 f"Could not parse line '{lines[line_idx]}' at line {line_idx}: {e}"
             )
 
-        match op:
-            case ".word":
-                assert len(args) == 1, "Expected 1 arg for .word directive"
-                base_insts.append([op, args, line_idx, cur_addr])
-                cur_addr += 1
-
-            case ".dword":
-                assert len(args) == 1, "Expected 1 arg for .dword directive"
-                base_insts.append([op, args, line_idx, cur_addr])
-                cur_addr += 2
-
-            case ".def":
-                assert len(args) == 2, f"Expected 2 args for .def directive"
-                Y, X = args[0], parse_const(args[1], 16)
-                vars[Y] = X
-
-            case ".addr":
-                assert len(args) == 1, f"Expected 1 arg for .addr directive"
-                X = parse_const(args[1], 16)
-                cur_addr = X
-
-            case ".bin":
-                # TODO
-                pass
-
-            case ".include":
-                # TODO
-                pass
-
-            case ".macro":
-                # Read the entire macro
-                # TODO
-                pass
-
-            case _:
-                base_insts.append([op, args, line_idx, cur_addr])
-                cur_addr += 1
-
-        # Next line
-        line_idx += 1
-
     # Pass 2: assemble each line
     for op, args, line_idx, addr in base_insts:
         try:
             words = base_parse_line(op, args, labels, addr)
         except Exception as e:
-            print(f"Error assembling '{lines[line_idx]}' at line {line_idx}")
+            print(f"Error assembling '{op} {', '.join(args)}' at line {line_idx}")
             raise e
 
         print(
-            f"line {line_idx:>5} | addr 0x{addr:04x} | op {op:>8} | {', '.join(args):>20} | {words[0]:04x}"
+            f"line {line_idx:>5} | addr 0x{addr:04x} | op {op:>8} | {', '.join(args):<28} | {words[0]:04x}"
         )
         max_addr = max(max_addr, addr)
 

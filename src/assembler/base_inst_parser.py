@@ -89,9 +89,11 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
     Branch instructions require special care, hence `labels` and `cur_addr` dicts.
     """
     if op in OPCODES.IMM:
-        assert len(args) == 3, f"Expected 3 args for {op} instruction"
+        assert len(args) == 3, f"Expected 3 args for {op} instruction, got {len(args)}"
         rd, rs = map(reg_idx, args[:2])
-        imm = parse_const(args[2], 8)
+
+        # Load address of label or immediate
+        imm = parse_const(args[2], 8, labels)
 
         # Instruction, encoded as binary
         inst_bin = (rs << 8) + (rd << 5) + imm
@@ -102,9 +104,11 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
         return inst_bin
 
     if op in OPCODES.LUI:
-        assert len(args) == 2, f"Expected 2 args for {op} instruction"
+        assert len(args) == 2, f"Expected 2 args for {op} instruction, got {len(args)}"
         rd = reg_idx(args[0])
-        imm = parse_const(args[1], 8)
+
+        # Load address of label or immediate
+        imm = parse_const(args[1], 8, labels)
 
         imm_hi = imm & (0b111 << 5)
         imm_lo = imm & (0b11111)
@@ -112,7 +116,7 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
         return inst_bin
 
     if op in OPCODES.ALU_AL:
-        assert len(args) == 3, f"Expected 3 args for {op} instruction"
+        assert len(args) == 3, f"Expected 3 args for {op} instruction, got {len(args)}"
         rs, rd, ro = map(reg_idx, args)
 
         op2 = {
@@ -138,7 +142,7 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
         return inst_bin
 
     if op in OPCODES.ALU_SH:
-        assert len(args) == 2, f"Expected 3 args for {op} instruction"
+        assert len(args) == 2, f"Expected 3 args for {op} instruction, got {len(args)}"
         rd, rs = map(reg_idx, args[:2])
         shamt = parse_const(args[2])
 
@@ -150,10 +154,12 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
         return inst_bin
 
     if op in OPCODES.JUMP:
+        assert len(args) == 2, f"Expected 2 args for {op} instruction, got {len(args)}"
+        rd, rs = map(reg_idx, args)
         return (rs << 8) + (rd << 5)
 
     if op in OPCODES.BR:
-        assert len(args) == 2, f"Expected 2 args for {op} instruction"
+        assert len(args) == 2, f"Expected 2 args for {op} instruction, got {len(args)}"
         rs = reg_idx(args[0])
         label = args[1]
 
@@ -174,7 +180,7 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
         return inst_bin
 
     if op in OPCODES.LOAD:
-        assert len(args) == 2, f"Expected 2 args for {op} instruction"
+        assert len(args) == 2, f"Expected 2 args for {op} instruction, got {len(args)}"
         rd = reg_idx(args[0])
         addr = re.match(r"(.+)\(.+\)")
         offset, rs = parse_const(addr[0]), reg_idx(addr[1])
@@ -183,7 +189,7 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
         inst_bin = (iType.LOAD << 11) + (rs << 8) + (rd << 5) + imm
 
     if op in OPCODES.STORE:
-        assert len(args) == 2, f"Expected 2 args for {op} instruction"
+        assert len(args) == 2, f"Expected 2 args for {op} instruction, got {len(args)}"
         ro = reg_idx(args[0])
         addr = re.match(r"(.+)\(.+\)")
         offset, rs = parse_const(addr[0]), reg_idx(addr[1])
