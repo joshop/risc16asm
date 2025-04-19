@@ -77,10 +77,21 @@ def base_parse_line(op: str, args: list, labels: dict, cur_addr: int) -> list[in
 
 
 def reg_idx(reg_name: str):
-    reg_names = [f"r{i}" for i in range(8)]
-    if not reg_name in reg_names:
-        print(f"Invalid register name '{reg_name}'")
-    return reg_names.index(reg_name)
+    reg_names = [
+        ["r0", "zero"],
+        ["r1", "ra"],
+        ["r2", "sp"],
+        ["r3", "a0"],
+        ["r4", "a1"],
+        ["r5", "a2"],
+        ["r6", "a3"],
+        ["r7", "a4"],
+    ]
+    for idx, names in enumerate(reg_names):
+        if reg_name in names:
+            return idx
+
+    raise SyntaxError(f"Invalid register name '{reg_name}'")
 
 
 def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:

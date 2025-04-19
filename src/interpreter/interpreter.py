@@ -3,6 +3,7 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from utils import format_const as fmt
 from interpreter.reg_file import RegFile
 from interpreter.execute import execute
 
@@ -23,12 +24,13 @@ class Interpreter:
         """
         return self.mem[self.pc] == 0b00100_000_00000000
 
-    def dump_state(self):
+    def dump_state(self, base=10):
         """
         Return a formatted string containing pc and contents of registers.
+            base: 2, 10, or 16 (base to display in)
         """
-        reg_str = ", ".join([f"r{i}=h'{self.rf[i]:04x}" for i in range(8)])
-        return f"pc=h'{self.pc:04x} | inst=h'{self.mem[self.pc]:04x} | {reg_str}"
+        reg_str = " ".join([f"[r{i}={fmt(self.rf[i], base, 5)}]" for i in range(8)])
+        return f"pc={fmt(self.pc, base, 4)} | inst={fmt(self.mem[self.pc], 16, 4)} | {reg_str}"
 
     def load_program(self, prog: bytes | str):
         """
