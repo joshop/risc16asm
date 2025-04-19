@@ -78,9 +78,9 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
 
         case iType.ADDSUB:
             match op2:
-                case 0b00, 0b01:
+                case 0b00 | 0b01:
                     rf[rd] = (rf[rs] + rf[ro]) & 0xFFFF
-                case 0b10, 0b11:
+                case 0b10 | 0b11:
                     # Python magic takes care of this :O
                     rf[rd] = (rf[rs] - rf[ro]) & 0xFFFF
 
