@@ -157,7 +157,9 @@ def assemble_program(prog: str) -> list[int]:
             raise e
 
         print(
-            f"line {line_idx:>5} | addr 0x{addr:04x} | op {op:>8} | {', '.join(args):<28} | {words[0]:04x}"
+            f"line {line_idx:>5} | addr h'{addr:04x} | op {op:>8} | {', '.join(args):<28} | "
+            f"h'{words[0]:04x}"
+            # f"b'{words[0]:016b}"
         )
         max_addr = max(max_addr, addr)
 

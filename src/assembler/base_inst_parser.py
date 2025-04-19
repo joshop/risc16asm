@@ -92,11 +92,13 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
         assert len(args) == 3, f"Expected 3 args for {op} instruction, got {len(args)}"
         rd, rs = map(reg_idx, args[:2])
 
-        # Load address of label or immediate
+        # Parse label/def or immediate
         imm = parse_const(args[2], 8, labels)
+        imm_hi = (imm & (0b111 << 5)) >> 5
+        imm_lo = imm & (0b11111)
 
         # Instruction, encoded as binary
-        inst_bin = (rs << 8) + (rd << 5) + imm
+        inst_bin = (imm_hi << 11) + (rs << 8) + (rd << 5) + (imm_lo)
         if op == "addi":
             inst_bin += iTypeImm.ADDI << 14
         elif op == "nandi":
@@ -107,10 +109,9 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
         assert len(args) == 2, f"Expected 2 args for {op} instruction, got {len(args)}"
         rd = reg_idx(args[0])
 
-        # Load address of label or immediate
+        # Parse label/def or immediate
         imm = parse_const(args[1], 8, labels)
-
-        imm_hi = imm & (0b111 << 5)
+        imm_hi = (imm & (0b111 << 5)) >> 5
         imm_lo = imm & (0b11111)
         inst_bin = (iType.LUI << 11) + (imm_hi << 8) + (rd << 5) + (imm_lo)
         return inst_bin
