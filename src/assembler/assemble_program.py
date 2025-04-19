@@ -137,9 +137,6 @@ def assemble_program(prog: str) -> list[int]:
 
                     case _:
                         # Standard instruction
-                        print(
-                            f"  ADDING STANDARD INST: {[op, args, line_idx, cur_addr]}"
-                        )
                         base_insts.append([op, args, line_idx, cur_addr])
                         cur_addr += 1
 
@@ -169,6 +166,7 @@ def assemble_program(prog: str) -> list[int]:
             assert isinstance(w, int), f"Returned invalid word '{w}'"
             if addr + i >= 1 << 16:
                 raise IndexError(f"Could not write to mem addr {addr + i}")
+
             mem[addr + i] = w
 
     return mem[: (max_addr + 1)]

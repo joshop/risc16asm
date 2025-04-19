@@ -15,9 +15,17 @@ from interpreter.interpreter import Interpreter
 def main():
     parser = argparse.ArgumentParser(description="RISC-16 runner")
     parser.add_argument("input_file", help="Input assembly file")
+    parser.add_argument(
+        "-c",
+        "--max-cycles",
+        help="Maximum number of cycles to run processor for",
+        default=5000,
+        type=int,
+    )
 
     args = parser.parse_args()
 
+    # Assemble contents of file
     if not os.path.isfile(args.input_file):
         print(f"Error: Input file '{args.input_file}' does not exist")
         exit(1)
@@ -28,10 +36,11 @@ def main():
 
     print(f"Assembled '{args.input_file}' into machine code with {len(prog)} words")
 
+    # Make interpreter and start running
     interp = Interpreter()
     interp.load_program(prog)
 
-    while not interp.is_halted():
+    while (not interp.is_halted()) and (interp.cycles < args.max_cycles):
         print(interp.dump_state())
         interp.step()
 

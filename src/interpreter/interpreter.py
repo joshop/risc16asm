@@ -15,6 +15,7 @@ class Interpreter:
         self.mem = [0] * (1 << 16)
         self.rf = RegFile()
         self.pc = 0
+        self.cycles = 0
 
     def is_halted(self):
         """
@@ -51,3 +52,4 @@ class Interpreter:
         """
         next_pc = execute(self.pc, self.rf, self.mem)
         self.pc = next_pc
+        self.cycles += 1
