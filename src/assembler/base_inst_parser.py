@@ -131,12 +131,14 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
         }[op]
         inst_bin = (rs << 8) + (rd << 5) + (ro << 2) + op2
 
+        print(f"op={op}")
         match op:
-            case ["nand", "and", "nor", "or"]:
+            case "nand" | "and" | "nor" | "or":
                 inst_bin += iType.LOGICAL << 11
-            case ["xor"]:
+            case "xor":
                 inst_bin += iType.XOR << 11
-            case ["add", "sub"]:
+            case "add" | "sub":
+                print("ADDSUBSUBSUBSUB")
                 inst_bin += iType.ADDSUB << 11
             case _:
                 raise SyntaxError(f"Unexpected opcode {op}")
