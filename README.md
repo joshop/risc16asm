@@ -49,7 +49,7 @@ Assembler directives include the following:
 - `.addr X` defines the current address to be `X`
 - `.bin filename` emits all of the bytes in `filename`
 - `.include filename` causes the assembler to process `filename`'s contents as if it was inserted into the file directly.
-- `.macro pattern` defines a macro that translates any statement matched by the regex `pattern`. Statements until `.endmacro` are considered part of the macro.
+- `.macro pattern` defines a macro that translates any statement matched by the regex `pattern`. Statements until `.endmacro` are considered part of the macro. Macros can contain sub-macros that are already defined, as well as `.bin` and `.include` directives.
 
 When instructions are assembled, immediates can be expressions with any of the following components:
 
