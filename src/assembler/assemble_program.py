@@ -226,7 +226,7 @@ def assemble_program(prog: str, filepath: str | None = None) -> list[int]:
             raise e
 
         print(
-            f"line {line_idx+1:>4} | addr h'{addr:04x} | op {op:>8} | {', '.join(args):<28.28} | "
+            f"line {line_idx+1:>4} | addr {addr:>5} | op {op:>8} | {', '.join(args):<28.28} | "
             f"h'{words[0]:04x} | "
             # f"b'{words[0]:016b} | "
             f"{filepath}"
