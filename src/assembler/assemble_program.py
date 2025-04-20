@@ -14,13 +14,23 @@ from utils import parse_const
 from assembler.base_inst_parser import base_parse_line
 
 
-def assemble_program(prog: str, filepath: str | None = None) -> list[int]:
+def get_base_insts(
+    prog: str,
+    filepath: str | None = None,
+    labels: dict[str, str] = {},
+    vars: dict[str, int] = {},
+    macros: dict[str, str] = {},
+    cur_addr: int = 0,
+) -> tuple[list, dict, dict, dict, int]:
     """
-    Parses a full program and emits the contents of memory.
-        prog: assembly program
+    Derive list of base instructions from assembly program.
+        prog (str): the assembly program
+        filepath (str): the location of the assembly program, used for .include and .bin directives
+        labels: dict of labels
+        vars: dict of .def directive products
+        macros: dict of .macro directive products
+        cur_addr: int where cur_addr should start
     """
-    mem = [0] * (1 << 16)
-
     # Parse lines one by one
     lines = prog.split("\n")
 
@@ -29,14 +39,24 @@ def assemble_program(prog: str, filepath: str | None = None) -> list[int]:
     #   - expand macros
     #   - figure out instruction widths
 
-    cur_addr = 0
-    max_addr = 0
-    vars = {}  # figure out label addresses
-    labels = {}  # store .def directives
-    macros = {}  # match macros to their expanded forms
     base_insts = []  # store (op, args, line_idx, addr)
-
     line_idx = 0
+
+    def insert_subprogram(prog: str, filepath: str = filepath):
+        """
+        Update local variables with new assembly (either as part of a macro or .include)
+            ! Relies on updating local variables !
+        """
+        nonlocal base_insts, labels, vars, macros, cur_addr
+
+        sub_base_insts, sub_labels, sub_vars, sub_macros, sub_cur_addr = get_base_insts(
+            prog, filepath, labels, vars, macros, cur_addr
+        )
+        base_insts.extend(sub_base_insts)
+        labels = {**labels, **sub_labels}
+        vars = {**vars, **sub_vars}
+        macros = {**macros, **sub_macros}
+        cur_addr = sub_cur_addr
 
     while line_idx < len(lines):
         # Remove comments
@@ -51,8 +71,6 @@ def assemble_program(prog: str, filepath: str | None = None) -> list[int]:
                 line_idx += 1
             line_idx += 1
             continue
-
-        print(f"LINE_IDX={line_idx}, line={line}")
 
         try:
             # Is it a label?
@@ -78,18 +96,18 @@ def assemble_program(prog: str, filepath: str | None = None) -> list[int]:
                         break
 
                 if is_macro:
-                    for line in replacement_lines.split("\n"):
-                        op, args = re.split(r"\s+", line, 1)
-                        args = re.split(r",\s*", args)
-                        base_insts.append([op, args, line_idx, cur_addr])
-                        cur_addr += 1
-
+                    insert_subprogram(replacement_lines)
                     line_idx += 1
                     continue
 
                 # Regular instruction (not a macro)
-                op, args = re.split(r"\s+", line, 1)
-                args = re.split(r",\s*", args)
+                try:
+                    op, args = re.split(r"\s+", line, 1)
+                    args = re.split(r",\s*", args)
+                except ValueError as e:
+                    raise SyntaxError(
+                        f"No args found. Did you forget to define a macro?"
+                    )
 
                 match op:
                     case ".include":
@@ -102,7 +120,7 @@ def assemble_program(prog: str, filepath: str | None = None) -> list[int]:
                         raw_path = os.path.join(os.path.dirname(filepath), args[0])
                         with open(raw_path) as fin:
                             subprog_asm = fin.read()
-                            lines[line_idx + 1 : line_idx + 1] = subprog_asm.split("\n")
+                            insert_subprogram(subprog_asm, args[0])
 
                     case ".word":
                         assert (
@@ -177,8 +195,23 @@ def assemble_program(prog: str, filepath: str | None = None) -> list[int]:
 
         except Exception as e:
             raise SyntaxError(
-                f"Could not parse line '{lines[line_idx]}' at line {line_idx+1}: {e}"
+                f"Could not parse line '{lines[line_idx].strip()}' at line {line_idx+1} ({filepath}):\n  {e}"
             )
+
+    return base_insts, labels, vars, macros, cur_addr
+
+
+def assemble_program(prog: str, filepath: str | None = None) -> list[int]:
+    """
+    Parses a full program and emits the contents of memory.
+        prog: assembly program
+    """
+    mem = [0] * (1 << 16)
+
+    lines = prog.split("\n")
+    base_insts, labels, vars, macros, max_addr = get_base_insts(
+        prog=prog, filepath=filepath
+    )
 
     # Pass 2: assemble each line
     for op, args, line_idx, addr in base_insts:
@@ -191,7 +224,9 @@ def assemble_program(prog: str, filepath: str | None = None) -> list[int]:
                 words = base_parse_line(op, args, labels, addr)
 
         except Exception as e:
-            print(f"Error assembling '{op} {', '.join(args)}' at line {line_idx+1}")
+            print(
+                f"Error assembling '{lines[line_idx].strip()}' at line {line_idx+1} ({filepath})"
+            )
             raise e
 
         print(
