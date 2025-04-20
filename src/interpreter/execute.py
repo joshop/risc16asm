@@ -97,8 +97,8 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
                 rf[rd] = rf[rs] >> shamt
 
         case iType.JUMP:
-            rf[rd] = pc + 1
             next_pc = rf[rs]
+            rf[rd] = pc + 1
 
         case iType.BR_BZ:
             if rf[rs] == 0:
