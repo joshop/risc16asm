@@ -57,7 +57,7 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
             rf[rd] = (rf[rs] + imm_imm) & 0xFFFF
         elif op_imm == iTypeImm.NANDI:
             # nandi
-            rf[rd] = ~(rf[rs] & imm_imm)
+            rf[rd] = (~(rf[rs] & imm_imm)) & 0xFFFF
 
         return next_pc
 
@@ -69,7 +69,7 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
         case iType.LOGICAL:
             match op2:
                 case 0b00:
-                    rf[rd] = ~(rf[rs] & rf[ro])
+                    rf[rd] = (~(rf[rs] & rf[ro])) & 0xFFFF
                 case 0b11:
                     rf[rd] = rf[rs] & rf[ro]
                 case 0b11:

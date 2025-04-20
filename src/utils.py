@@ -10,7 +10,10 @@ def parse_const(s: str, width: int, labels: dict = {}, vars: dict = {}) -> int:
     mask = (1 << width) - 1
 
     value = eval(s, {"__builtins__": None, **labels, **vars})
-    assert value & (~mask) == 0, f"Value {value} does not fit in {width} bits"
+
+    assert (
+        -(1 << width) <= value < (1 << width)
+    ), f"parse_const: Value {value} does not fit in {width} bits"
     return value & mask
 
 

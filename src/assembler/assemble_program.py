@@ -120,20 +120,21 @@ def get_base_insts(
                         raw_path = os.path.join(os.path.dirname(filepath), args[0])
                         with open(raw_path) as fin:
                             subprog_asm = fin.read()
-                            insert_subprogram(subprog_asm, args[0])
+
+                        insert_subprogram(subprog_asm, args[0])
 
                     case ".word":
                         assert (
                             len(args) == 1
                         ), f"Expected 1 arg for .word directive, got {len(args)}"
-                        base_insts.append([op, args, line_idx, cur_addr])
+                        base_insts.append([op, args, line_idx, cur_addr, filepath])
                         cur_addr += 1
 
                     case ".dword":
                         assert (
                             len(args) == 1
                         ), f"Expected 1 arg for .dword directive, got {len(args)}"
-                        base_insts.append([op, args, line_idx, cur_addr])
+                        base_insts.append([op, args, line_idx, cur_addr, filepath])
                         cur_addr += 2
 
                     case ".def":
@@ -151,10 +152,6 @@ def get_base_insts(
                         cur_addr = X
 
                     case ".bin":
-                        # TODO
-                        pass
-
-                    case ".include":
                         # TODO
                         pass
 
@@ -187,7 +184,7 @@ def get_base_insts(
 
                     case _:
                         # Standard instruction
-                        base_insts.append([op, args, line_idx, cur_addr])
+                        base_insts.append([op, args, line_idx, cur_addr, filepath])
                         cur_addr += 1
 
             # Next line
@@ -208,13 +205,12 @@ def assemble_program(prog: str, filepath: str | None = None) -> list[int]:
     """
     mem = [0] * (1 << 16)
 
-    lines = prog.split("\n")
     base_insts, labels, vars, macros, max_addr = get_base_insts(
         prog=prog, filepath=filepath
     )
 
     # Pass 2: assemble each line
-    for op, args, line_idx, addr in base_insts:
+    for op, args, line_idx, addr, filepath in base_insts:
         try:
             if op == ".bin":
                 # Include raw binary, treat as a bunch of .word directives
@@ -225,10 +221,9 @@ def assemble_program(prog: str, filepath: str | None = None) -> list[int]:
 
         except Exception as e:
             print(
-                f"Error assembling '{lines[line_idx].strip()}' at line {line_idx+1} ({filepath}):\n  {e}"
+                f"Error assembling '{op} {', '.join(args)}' at line {line_idx+1} ({filepath}):\n  {e}"
             )
             raise e
-            exit(1)
 
         print(
             f"line {line_idx+1:>4} | addr h'{addr:04x} | op {op:>8} | {', '.join(args):<28.28} | "
