@@ -73,7 +73,9 @@ def base_parse_line(op: str, args: list, labels: dict, cur_addr: int) -> list[in
     if op in BASE_OPCODES:
         return [parse_base_inst(op, args, labels, cur_addr)]
 
-    raise Exception(f"parse_line: invalid opcode '{op}'")
+    raise Exception(
+        f"parse_line: invalid opcode '{op}'. Did you forget to define a macro?"
+    )
 
 
 def reg_idx(reg_name: str):

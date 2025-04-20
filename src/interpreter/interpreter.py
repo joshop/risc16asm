@@ -30,7 +30,7 @@ class Interpreter:
             base: 2, 10, or 16 (base to display in)
         """
         reg_str = " ".join([f"[{fmt(self.rf[i], base)}]" for i in range(8)])
-        return f"pc {fmt(self.pc, base):>7} | inst={fmt(self.mem[self.pc], 16)} | {reg_str}"
+        return f"cycle {self.cycles:>6} | pc {fmt(self.pc, base):>7} | inst={fmt(self.mem[self.pc], 16)} | {reg_str}"
 
     def load_program(self, prog: bytes | str):
         """

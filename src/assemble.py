@@ -24,7 +24,7 @@ def assemble(input_file: str, output_file: str):
     # Exceptions will pass through
     with open(input_file) as fin:
         prog = fin.read()
-    binary_code = assemble_program(prog)
+    binary_code = assemble_program(prog, input_file)
 
     # Write the binary code to the output file
     with open(output_file, "wb") as f:

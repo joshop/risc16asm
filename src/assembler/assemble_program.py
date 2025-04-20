@@ -9,11 +9,12 @@ import os
 import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from utils import parse_const
 from assembler.base_inst_parser import base_parse_line
 
 
-def assemble_program(prog: str) -> list[int]:
+def assemble_program(prog: str, filepath: str | None = None) -> list[int]:
     """
     Parses a full program and emits the contents of memory.
         prog: assembly program
@@ -51,11 +52,18 @@ def assemble_program(prog: str) -> list[int]:
             line_idx += 1
             continue
 
+        print(f"LINE_IDX={line_idx}, line={line}")
+
         try:
             # Is it a label?
             label_match = re.fullmatch("(\w+):", line)
             if label_match:
                 label = label_match.group(1)
+
+                # No duplicate labels
+                if label in labels:
+                    raise SyntaxError(f"Duplicate label '{label}' on line {line_idx}")
+
                 labels[label] = cur_addr
                 line_idx += 1
                 continue
@@ -84,6 +92,18 @@ def assemble_program(prog: str) -> list[int]:
                 args = re.split(r",\s*", args)
 
                 match op:
+                    case ".include":
+                        assert (
+                            len(args) == 1
+                        ), f"Expeced 1 arg for .include directive, got {len(args)}"
+
+                        # Read contents of .include and assemble it
+                        # .include is relative to the program's file path, if it exists
+                        raw_path = os.path.join(os.path.dirname(filepath), args[0])
+                        with open(raw_path) as fin:
+                            subprog_asm = fin.read()
+                            lines[line_idx + 1 : line_idx + 1] = subprog_asm.split("\n")
+
                     case ".word":
                         assert (
                             len(args) == 1
@@ -124,9 +144,15 @@ def assemble_program(prog: str) -> list[int]:
                         # Read the entire macro
                         og_line_idx = line_idx
                         macro_pattern = line.split(" ", 1)[1]
-                        replacement_lines = []
+
+                        # No duplicate macros
+                        if macro_pattern in macros:
+                            raise SyntaxError(
+                                f"Duplicate macro '{macro_pattern}' on line {og_line_idx}"
+                            )
 
                         # Get all contents before .endmacro
+                        replacement_lines = []
                         line_idx += 1
                         while line_idx < len(lines) and lines[line_idx] != ".endmacro":
                             replacement_lines.append(lines[line_idx])
@@ -157,7 +183,13 @@ def assemble_program(prog: str) -> list[int]:
     # Pass 2: assemble each line
     for op, args, line_idx, addr in base_insts:
         try:
-            words = base_parse_line(op, args, labels, addr)
+            if op == ".bin":
+                # Include raw binary, treat as a bunch of .word directives
+                words = args
+            else:
+                # Parse as usual instruction
+                words = base_parse_line(op, args, labels, addr)
+
         except Exception as e:
             print(f"Error assembling '{op} {', '.join(args)}' at line {line_idx+1}")
             raise e

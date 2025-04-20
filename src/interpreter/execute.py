@@ -64,7 +64,7 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
     # Everything else
     match op5:
         case iType.LUI:
-            rf[rd] = imm_lui << 8
+            rf[rd] = (imm_lui << 8) & 0xFFFF
 
         case iType.LOGICAL:
             match op2:
@@ -107,10 +107,10 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
             if rf[rs] != 0:
                 next_pc = pc + imm_br
         case iType.BR_BP:
-            if rf[rs] > 0:
+            if not (rf[rs] & (1 << 15)):
                 next_pc = pc + imm_br
         case iType.BR_BNP:
-            if rf[rs] <= 0:
+            if rf[rs] & (1 << 15):
                 next_pc = pc + imm_br
 
         case iType.LOAD:

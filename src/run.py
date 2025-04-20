@@ -31,7 +31,7 @@ def main():
         exit(1)
 
     with open(args.input_file) as fin:
-        prog_list: bytes = assemble_program(fin.read())
+        prog_list: bytes = assemble_program(fin.read(), args.input_file)
         prog = struct.pack(f"<{len(prog_list)}H", *prog_list)
 
     print(f"Assembled '{args.input_file}' into machine code with {len(prog)} words")
