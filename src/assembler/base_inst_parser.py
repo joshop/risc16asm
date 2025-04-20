@@ -131,7 +131,7 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
 
     if op in OPCODES.ALU_AL:
         assert len(args) == 3, f"Expected 3 args for {op} instruction, got {len(args)}"
-        rs, rd, ro = map(reg_idx, args)
+        rd, rs, ro = map(reg_idx, args)
 
         op2 = {
             "nand": 0b00,
