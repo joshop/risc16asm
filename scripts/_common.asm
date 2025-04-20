@@ -4,7 +4,7 @@ addi r0, r0, 0
 .endmacro
 
 // Load immediate
-.macro li (\w+), (\w+)
+.macro li (\w+), (.+)
 lui \1, ((\2) >> 8) + ((\2 & 0xff) >> 7)
 addi \1, \1, (\2) & 0xff
 .endmacro

@@ -156,9 +156,9 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
         return inst_bin
 
     if op in OPCODES.ALU_SH:
-        assert len(args) == 2, f"Expected 3 args for {op} instruction, got {len(args)}"
+        assert len(args) == 3, f"Expected 3 args for {op} instruction, got {len(args)}"
         rd, rs = map(reg_idx, args[:2])
-        shamt = parse_const(args[2])
+        shamt = parse_const(args[2], 3)
 
         sd = {
             "sl": 0,

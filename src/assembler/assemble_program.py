@@ -225,9 +225,10 @@ def assemble_program(prog: str, filepath: str | None = None) -> list[int]:
 
         except Exception as e:
             print(
-                f"Error assembling '{lines[line_idx].strip()}' at line {line_idx+1} ({filepath})"
+                f"Error assembling '{lines[line_idx].strip()}' at line {line_idx+1} ({filepath}):\n  {e}"
             )
             raise e
+            exit(1)
 
         print(
             f"line {line_idx+1:>4} | addr h'{addr:04x} | op {op:>8} | {', '.join(args):<28.28} | "
