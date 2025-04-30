@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RISC-16 interpreter</title>
+
+    <!-- favicon -->
+    <link rel="icon" href="https://fav.farm/🖥️" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="main.css" />
+    <link rel="stylesheet" href="https://unpkg.com/bamboo.css" />
+
+    <!-- Scripts -->
+    <script src="js/main.js" type="module" defer></script>
+  </head>
+
+  <body>
+    <main>
+      <!-- Header -->
+      <h1>RISC-16 web interpreter</h1>
+      <a href="https://github.com/joshop/risc16asm">GitHub</a>
+
+      <!-- Columns -->
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Left column: text -->
+        <div class="">
+          <!-- File upload -->
+          <div>
+            <h2>Upload machine code</h2>
+            <input type="file" id="file-input" />
+          </div>
+
+          <!-- Readout -->
+          <div>
+            <h2>Processor state</h2>
+            <table>
+              <tr>
+                <td>pc</td>
+                <td id="pc">n/a</td>
+              </tr>
+              <tr>
+                <td>mem[pc]</td>
+                <td id="inst">n/a</td>
+              </tr>
+            </table>
+
+            <div>
+              <button>step ></button>
+            </div>
+
+            <!-- Register values -->
+            <div>
+              <h3>Registers</h3>
+              <table id="reg-table">
+                <thead>
+                  <th><td>Register</td></th>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>r1 (sp)</td>
+                    <td id="r1">n/a</td>
+                  </tr>
+                  <tr>
+                    <td>r2 (ra)</td>
+                    <td id="r2">n/a</td>
+                  </tr>
+                  <tr>
+                    <td>r3 (a0)</td>
+                    <td id="r3">n/a</td>
+                  </tr>
+                  <tr>
+                    <td>r4 (a1)</td>
+                    <td id="r4">n/a</td>
+                  </tr>
+                  <tr>
+                    <td>r5 (a2)</td>
+                    <td id="r5">n/a</td>
+                  </tr>
+                  <tr>
+                    <td>r6 (a3)</td>
+                    <td id="r6">n/a</td>
+                  </tr>
+                  <tr>
+                    <td>r7 (a4)</td>
+                    <td id="r7">n/a</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column: display -->
+        <div class="w-full">
+          <canvas
+            class="w-full"
+            width="1024"
+            height="1024"
+            id="mem-canvas"
+          ></canvas>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

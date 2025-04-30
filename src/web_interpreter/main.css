@@ -1,0 +1,42 @@
+body {
+  display: flex;
+  justify-content: center;
+  font-family: monospace, sans-serif !important;
+  letter-spacing: -0.05ch;
+}
+
+main {
+  width: 100%;
+  max-width: 840px;
+}
+
+/* Table formatting */
+table td {
+  padding: 0.3rem 0.6rem;
+}
+
+/* Register data format (monospace) */
+td:last-child {
+  font-variant-numeric: tabular-nums;
+  font-family: monospace;
+}
+
+/* Fake tailwind aaaa */
+.grid {
+  display: grid;
+}
+.grid-cols-2 {
+  grid-template-columns: 1fr 1fr;
+}
+.gap-4 {
+  gap: 2rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+/* Canvas displays */
+canvas {
+  border: 1px solid black;
+}

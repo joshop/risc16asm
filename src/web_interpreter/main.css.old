@@ -1,0 +1,13 @@
+/* Canvas display */
+/* canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+} */
+
+/* Margins */
+/* h2 {
+  margin-bottom: 0.5rem;
+}
+p {
+  margin: 0;
+} */
