@@ -6,9 +6,6 @@ import { fmtHex } from './utils.js';
 const interp = new Interpreter();
 window.interp = interp;
 
-// Reset logs
-$('#logs').value = '';
-
 // Listen for file upload and change system mem
 const fileInputEl = $('#file-input');
 const fileReader = new FileReader();
@@ -17,6 +14,7 @@ const fileReader = new FileReader();
 const readMachineCode = () => {
   fileReader.readAsArrayBuffer(fileInputEl.files[0]);
   fileReader.onload = () => {
+    interp.mem.fill(0);
     interp.mem.set(new Uint16Array(fileReader.result));
     console.log(
       `Uploaded new machine code (${fileReader.result.byteLength} B)`
@@ -37,7 +35,7 @@ const readMachineCode = () => {
 
 const step = () => {
   interp.step();
-  interp.updateUI();
+  if (interp.cycles % 16 === 0) interp.updateUI();
 
   let log = `cycle ${interp.cycles.toString().padStart(6)} | `;
   log += `pc ${interp.pc.toString().padStart(5)} | `;

@@ -4,8 +4,8 @@ body {
   font-family: monospace, sans-serif !important;
   letter-spacing: -0.05ch;
 
-  max-width: none !important;
-  margin: 0 !important;
+  max-width: 840px !important;
+  margin: 0 auto !important;
 }
 
 main {
