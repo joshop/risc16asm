@@ -9,23 +9,23 @@
     <link rel="icon" href="https://fav.farm/🖥️" />
 
     <!-- Styles -->
-    <link rel="stylesheet" href="main.css" />
     <link rel="stylesheet" href="https://unpkg.com/bamboo.css" />
+    <link rel="stylesheet" href="main.css" />
 
     <!-- Scripts -->
     <script src="js/main.js" type="module" defer></script>
   </head>
 
-  <body>
-    <main>
+  <body class="w-full">
+    <main class="w-full">
       <!-- Header -->
       <h1>RISC-16 web interpreter</h1>
       <a href="https://github.com/joshop/risc16asm">GitHub</a>
 
       <!-- Columns -->
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-3 gap-4 w-full">
         <!-- Left column: text -->
-        <div class="">
+        <div>
           <!-- File upload -->
           <div>
             <h2>Upload machine code</h2>
@@ -37,6 +37,10 @@
             <h2>Processor state</h2>
             <table>
               <tr>
+                <td>cycle</td>
+                <td id="cycle">n/a</td>
+              </tr>
+              <tr>
                 <td>pc</td>
                 <td id="pc">n/a</td>
               </tr>
@@ -47,7 +51,7 @@
             </table>
 
             <div>
-              <button>step ></button>
+              <button disabled onclick="step();" id="start-btn">step</button>
             </div>
 
             <!-- Register values -->
@@ -55,15 +59,17 @@
               <h3>Registers</h3>
               <table id="reg-table">
                 <thead>
-                  <th><td>Register</td></th>
+                  <tr>
+                    <th>Register</th>
+                  </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>r1 (sp)</td>
+                    <td>r1 (ra)</td>
                     <td id="r1">n/a</td>
                   </tr>
                   <tr>
-                    <td>r2 (ra)</td>
+                    <td>r2 (sp)</td>
                     <td id="r2">n/a</td>
                   </tr>
                   <tr>
@@ -94,12 +100,19 @@
 
         <!-- Right column: display -->
         <div class="w-full">
+          <h2>Memory</h2>
           <canvas
             class="w-full"
             width="1024"
             height="1024"
             id="mem-canvas"
           ></canvas>
+        </div>
+
+        <!-- Output -->
+        <div>
+          <h2>Logs</h2>
+          <textarea rows="32" spellcheck="false" id="logs" />
         </div>
       </div>
     </main>

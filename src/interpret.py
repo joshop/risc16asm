@@ -36,7 +36,7 @@ def main():
 
         while True:
             interp.step()
-            print(f"cycle {cycle:>10d} |", interp.dump_state())
+            print(interp.dump_state())
             cycle += 1
 
             # Break if encounger `bz r0, <zero offset>`

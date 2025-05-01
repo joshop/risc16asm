@@ -3,11 +3,13 @@ body {
   justify-content: center;
   font-family: monospace, sans-serif !important;
   letter-spacing: -0.05ch;
+
+  max-width: none !important;
+  margin: 0 !important;
 }
 
 main {
   width: 100%;
-  max-width: 840px;
 }
 
 /* Table formatting */
@@ -28,8 +30,11 @@ td:last-child {
 .grid-cols-2 {
   grid-template-columns: 1fr 1fr;
 }
+.grid-cols-3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
 .gap-4 {
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .w-full {
@@ -38,5 +43,12 @@ td:last-child {
 
 /* Canvas displays */
 canvas {
-  border: 1px solid black;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  background-color: #00000010;
+}
+
+/* Logs */
+textarea#logs {
+  text-wrap: nowrap;
 }
