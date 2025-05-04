@@ -185,7 +185,6 @@ export class Interpreter {
         imageBuffer[pixelIdx + 3] = 255;
       }
     }
-
     const iData = new ImageData(imageBuffer, 1024, 1024);
     memCanvasCtx.putImageData(iData, 0, 0);
 

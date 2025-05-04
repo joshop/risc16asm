@@ -25,7 +25,7 @@ const readMachineCode = () => {
     interp.updateUI();
 
     const nextFrame = () => {
-      for (let i = 0; i < 16; i++) interp.step();
+      for (let i = 0; i < 1024; i++) interp.step();
       interp.updateUI();
       requestAnimationFrame(nextFrame);
     };
@@ -35,16 +35,6 @@ const readMachineCode = () => {
 
 const step = () => {
   interp.step();
-  if (interp.cycles % 16 === 0) interp.updateUI();
-
-  let log = `cycle ${interp.cycles.toString().padStart(6)} | `;
-  log += `pc ${interp.pc.toString().padStart(5)} | `;
-  log += `inst=${fmtHex(interp.mem[interp.pc])} | `;
-  log += Array.from(interp.regs)
-    .map((x) => `[${x.toString().padStart(5)}]`)
-    .join(' ');
-
-  $('#logs').value += `${log}\n`;
 };
 window.step = step;
 
