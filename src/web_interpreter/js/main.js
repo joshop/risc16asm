@@ -1,10 +1,15 @@
 import { Interpreter } from './interpreter.js';
+import { Display } from './display.js';
 import { $ } from './dom.js';
 import { fmtHex } from './utils.js';
 
 // New interpreter
 const interp = new Interpreter();
 window.interp = interp;
+
+// New display
+const display = new Display(interp);
+window.display = display;
 
 // Listen for file upload and change system mem
 const fileInputEl = $('#file-input');
@@ -27,6 +32,7 @@ const readMachineCode = () => {
     const nextFrame = () => {
       for (let i = 0; i < 1024; i++) interp.step();
       interp.updateUI();
+      display.render();
       requestAnimationFrame(nextFrame);
     };
     nextFrame();

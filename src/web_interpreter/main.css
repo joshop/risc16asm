@@ -42,6 +42,7 @@ td:last-child {
 }
 
 /* Canvas displays */
+/* Make them pixelated */
 canvas {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
