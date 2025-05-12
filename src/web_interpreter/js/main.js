@@ -30,7 +30,7 @@ const readMachineCode = () => {
     interp.updateUI();
 
     const nextFrame = () => {
-      for (let i = 0; i < 1024; i++) interp.step();
+      for (let i = 0; i < 1; i++) interp.step();
       interp.updateUI();
       display.render();
       requestAnimationFrame(nextFrame);

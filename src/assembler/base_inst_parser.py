@@ -19,8 +19,8 @@ from inst_types import iType, iTypeImm
 class OPCODES:
     IMM = ["addi", "nandi"]
     LUI = ["lui"]
-    ALU_AL = ["nand", "and", "nor", "or", "add", "sub"]
-    ALU_SH = ["sl", "sr", "xor"]
+    ALU_AL = ["nand", "and", "nor", "or", "add", "sub", "xor"]
+    ALU_SH = ["sl", "sr"]
     JUMP = ["jalr"]
     BR = ["bz", "bnz", "bp", "bnp"]
     LOAD = ["lw"]

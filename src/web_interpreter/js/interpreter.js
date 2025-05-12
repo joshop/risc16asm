@@ -43,7 +43,7 @@ export class Interpreter {
     this.cycles++;
 
     const inst = this.mem[this.pc];
-    let nextPc = this.pc + 1; // Default next pc
+    let nextPc = (this.pc + 1) & 0xffff; // Default next pc
 
     // Extract instruction fields
     const rs = (inst >> 8) & 0b111;
@@ -69,6 +69,7 @@ export class Interpreter {
     if (opImm === ADDI || opImm === NANDI) {
       if (opImm === ADDI) {
         // addi
+        console.log(`addi rd=${rd}`);
         this.rfw(rd, (this.rfr(rs) + immImm) & 0xffff);
       } else if (opImm === NANDI) {
         // nandi
@@ -162,6 +163,11 @@ export class Interpreter {
         break;
 
       case STORE:
+        console.log(
+          `writing to index ${this.rfr(rs) + immStore}, value ${
+            this.rfr(ro) & 0xffff
+          }`
+        );
         this.mem[this.rfr(rs) + immStore] = this.rfr(ro) & 0xffff;
         break;
     }
