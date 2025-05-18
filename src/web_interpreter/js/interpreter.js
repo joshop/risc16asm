@@ -56,14 +56,11 @@ export class Interpreter {
     const op2 = inst & 0b11;
 
     // Extract immediate values
-    const immImm = parseImm(
-      ((inst & (0b111 << 11)) >> 6) + (inst & 0b11111),
-      8
-    );
-    const immLui = parseImm(((inst & (0b111 << 8)) >> 3) + (inst & 0b11111), 8);
+    const immImm = parseImm(((inst >> 6) & 0b11100000) + (inst & 0b11111), 8);
+    const immLui = parseImm(((inst >> 3) & 0b11100000) + (inst & 0b11111), 8);
     const immBr = parseImm(inst & 0b11111111, 8);
     const immLoad = parseImm(inst & 0b11111, 5);
-    const immStore = parseImm(((inst & (0b111 << 5)) >> 3) + (inst & 0b11), 5);
+    const immStore = parseImm(((inst >> 3) & 0b11100) + (inst & 0b11), 5);
 
     // IMM-TYPE instructions
     if (opImm === ADDI || opImm === NANDI) {
@@ -115,7 +112,7 @@ export class Interpreter {
         break;
 
       case XOR:
-        this.rfw(rd, this.rfr(rs) ^ this.rfr(ro));
+        this.rfw(rd, (this.rfr(rs) ^ this.rfr(ro)) & 0xffff);
         break;
 
       case SHIFT:
@@ -162,11 +159,6 @@ export class Interpreter {
         break;
 
       case STORE:
-        console.log(
-          `writing to index ${this.rfr(rs) + immStore}, value ${
-            this.rfr(ro) & 0xffff
-          }`
-        );
         this.mem[this.rfr(rs) + immStore] = this.rfr(ro) & 0xffff;
         break;
     }
