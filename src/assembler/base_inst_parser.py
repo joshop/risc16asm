@@ -40,7 +40,9 @@ OPCODE_DICT = {
 BASE_OPCODES = sum(OPCODE_DICT.values(), [])
 
 
-def base_parse_line(op: str, args: list, labels: dict, cur_addr: int) -> list[int]:
+def base_parse_line(
+    op: str, args: list, labels: dict, vars: dict, cur_addr: int
+) -> list[int]:
     """
     Method to parse location-independent instructions/directives:
         - .word
@@ -71,7 +73,7 @@ def base_parse_line(op: str, args: list, labels: dict, cur_addr: int) -> list[in
 
     # Regular opcode
     if op in BASE_OPCODES:
-        return [parse_base_inst(op, args, labels, cur_addr)]
+        return [parse_base_inst(op, args, labels, vars, cur_addr)]
 
     raise Exception(
         f"parse_line: invalid opcode '{op}'. Did you forget to define a macro?"
@@ -96,7 +98,7 @@ def reg_idx(reg_name: str):
     raise SyntaxError(f"Invalid register name '{reg_name}'")
 
 
-def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
+def parse_base_inst(op, args, labels: dict, vars: dict, cur_addr: int) -> int:
     """
     Parse a base instruction like addi, lui, sub, sl, bz.
     Branch instructions require special care, hence `labels` and `cur_addr` dicts.
@@ -106,7 +108,7 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
         rd, rs = map(reg_idx, args[:2])
 
         # Parse label/def or immediate
-        imm = parse_const(args[2], 8, labels)
+        imm = parse_const(args[2], 8, labels, vars)
         imm_hi = (imm & (0b111 << 5)) >> 5
         imm_lo = imm & (0b11111)
 
@@ -123,7 +125,7 @@ def parse_base_inst(op, args, labels: dict, cur_addr: int) -> int:
         rd = reg_idx(args[0])
 
         # Parse label/def or immediate
-        imm = parse_const(args[1], 8, labels)
+        imm = parse_const(args[1], 8, labels, vars)
         imm_hi = (imm & (0b111 << 5)) >> 5
         imm_lo = imm & (0b11111)
         inst_bin = (iType.LUI << 11) + (imm_hi << 8) + (rd << 5) + (imm_lo)

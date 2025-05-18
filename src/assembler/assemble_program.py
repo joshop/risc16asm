@@ -217,7 +217,7 @@ def assemble_program(prog: str, filepath: str | None = None) -> list[int]:
                 words = args
             else:
                 # Parse as usual instruction
-                words = base_parse_line(op, args, labels, addr)
+                words = base_parse_line(op, args, labels, vars, addr)
 
         except Exception as e:
             print(

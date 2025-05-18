@@ -9,7 +9,11 @@ def parse_const(s: str, width: int, labels: dict = {}, vars: dict = {}) -> int:
     # Select lowest `width` bits
     mask = (1 << width) - 1
 
-    value = eval(s, {"__builtins__": None, **labels, **vars})
+    try:
+        value = eval(s, {"__builtins__": {}, **labels, **vars})
+    except TypeError as e:
+        print(f"Could not eval expression '{s}', ensure all vars are defined")
+        exit(1)
 
     assert (
         -(1 << width) <= value < (1 << width)

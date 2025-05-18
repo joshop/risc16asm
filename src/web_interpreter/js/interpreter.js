@@ -25,7 +25,7 @@ export class Interpreter {
     this.mem = new Uint16Array(1 << 16);
     this.pc = 0;
     this.regs = new Uint16Array(8);
-    this.cycles = 0;
+    this.cycle = 0;
 
     // IO devices
     this.display = display;
@@ -48,7 +48,7 @@ export class Interpreter {
   // Meat of the thing
   // Returns whether display updates
   step() {
-    this.cycles++;
+    this.cycle++;
     let displayUpdated = false;
 
     const inst = this.mem[this.pc];
@@ -203,7 +203,7 @@ export class Interpreter {
     // Update PC
     $('#pc').innerText = this.pc;
     $('#inst').innerText = fmtHex(this.mem[this.pc]);
-    $('#cycle').innerText = this.cycles;
+    $('#cycle').innerText = this.cycle;
 
     for (let i = 1; i <= 7; i++) {
       // $(`#r${i}`).innerText = fmtHex(this.rfr(i));
@@ -214,12 +214,12 @@ export class Interpreter {
     let timeSinceLastCycleCount = (new Date() - this.lastCycleTime) / 1000;
     if (timeSinceLastCycleCount > 1) {
       $('#clock-speed').innerText = `${(
-        (this.cycles - this.lastCycleCount) /
+        (this.cycle - this.lastCycleCount) /
         timeSinceLastCycleCount /
         1000
       ).toFixed(2)} KHz`;
 
-      this.lastCycleCount = this.cycles;
+      this.lastCycleCount = this.cycle;
       this.lastCycleTime = new Date();
     }
   }
