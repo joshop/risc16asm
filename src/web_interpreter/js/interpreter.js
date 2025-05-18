@@ -69,7 +69,6 @@ export class Interpreter {
     if (opImm === ADDI || opImm === NANDI) {
       if (opImm === ADDI) {
         // addi
-        console.log(`addi rd=${rd}`);
         this.rfw(rd, (this.rfr(rs) + immImm) & 0xffff);
       } else if (opImm === NANDI) {
         // nandi
