@@ -3,14 +3,8 @@ body {
   justify-content: center;
   font-family: monospace, sans-serif !important;
 
-  padding: 1rem;
-
   background-color: black;
   color: white;
-}
-
-main {
-  width: 100%;
 }
 
 a {
@@ -23,7 +17,8 @@ a {
 canvas {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-  background-color: #ffffff20;
+  background-color: #ffffff10;
+  border: 1px solid #ffffff40;
 }
 
 /* Logs */

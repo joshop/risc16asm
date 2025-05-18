@@ -16,117 +16,119 @@
     <script src="js/main.js" type="module" defer></script>
   </head>
 
-  <body class="w-full">
-    <main class="w-full">
-      <!-- Header -->
-      <h1 class="mb-4">
-        <b>RISC-16 web interpreter</b>
-        <a href="https://github.com/joshop/risc16asm">(Github)</a>
-      </h1>
+  <body class="w-full h-screen overflow-hidden">
+    <!-- Columns -->
+    <div class="flex w-full p-4 gap-4">
+      <!-- Left column: status -->
+      <div>
+        <!-- Header -->
+        <h1 class="mb-4">
+          <b>RISC-16 web interpreter</b>
+          <a href="https://github.com/joshop/risc16asm">(Github)</a>
+        </h1>
 
-      <!-- Columns -->
-      <div class="grid grid-cols-2 gap-4 w-full">
-        <!-- Left column: text -->
+        <!-- File upload -->
         <div>
-          <!-- File upload -->
+          <b>Upload machine code</b><br />
+          <input class="border px-3 py-1 mt-1" type="file" id="file-input" />
+        </div>
+
+        <br />
+
+        <!-- Readout -->
+        <div>
+          <b>Processor state</b>
+          <table class="border-spacing-x-8 border-separate">
+            <tr>
+              <td>cycle</td>
+              <td id="cycle">n/a</td>
+            </tr>
+            <tr>
+              <td>pc</td>
+              <td id="pc">n/a</td>
+            </tr>
+            <tr>
+              <td>mem[pc]</td>
+              <td id="inst">n/a</td>
+            </tr>
+          </table>
+
+          <br />
+
           <div>
-            <b>Upload machine code</b><br />
-            <input class="border px-3 py-1 mt-1" type="file" id="file-input" />
+            <button
+              class="px-3 py-0.5 border"
+              disabled
+              onclick="step();"
+              id="start-btn"
+            >
+              step
+            </button>
           </div>
 
           <br />
 
-          <!-- Readout -->
+          <!-- Register values -->
           <div>
-            <b>Processor state</b>
-            <table class="border-spacing-x-8 border-separate">
-              <tr>
-                <td>cycle</td>
-                <td id="cycle">n/a</td>
-              </tr>
-              <tr>
-                <td>pc</td>
-                <td id="pc">n/a</td>
-              </tr>
-              <tr>
-                <td>mem[pc]</td>
-                <td id="inst">n/a</td>
-              </tr>
+            <b>Registers</b>
+            <table id="reg-table" class="border-spacing-x-8 border-separate">
+              <tbody>
+                <tr>
+                  <td>r1 (ra)</td>
+                  <td id="r1">n/a</td>
+                </tr>
+                <tr>
+                  <td>r2 (sp)</td>
+                  <td id="r2">n/a</td>
+                </tr>
+                <tr>
+                  <td>r3 (a0)</td>
+                  <td id="r3">n/a</td>
+                </tr>
+                <tr>
+                  <td>r4 (a1)</td>
+                  <td id="r4">n/a</td>
+                </tr>
+                <tr>
+                  <td>r5 (a2)</td>
+                  <td id="r5">n/a</td>
+                </tr>
+                <tr>
+                  <td>r6 (a3)</td>
+                  <td id="r6">n/a</td>
+                </tr>
+                <tr>
+                  <td>r7 (a4)</td>
+                  <td id="r7">n/a</td>
+                </tr>
+              </tbody>
             </table>
+          </div>
 
-            <br />
+          <br />
 
-            <div>
-              <button
-                class="px-3 py-0.5 border"
-                disabled
-                onclick="step();"
-                id="start-btn"
-              >
-                step
-              </button>
-            </div>
-
-            <br />
-
-            <!-- Register values -->
-            <div>
-              <b>Registers</b>
-              <table id="reg-table" class="border-spacing-x-8 border-separate">
-                <tbody>
-                  <tr>
-                    <td>r1 (ra)</td>
-                    <td id="r1">n/a</td>
-                  </tr>
-                  <tr>
-                    <td>r2 (sp)</td>
-                    <td id="r2">n/a</td>
-                  </tr>
-                  <tr>
-                    <td>r3 (a0)</td>
-                    <td id="r3">n/a</td>
-                  </tr>
-                  <tr>
-                    <td>r4 (a1)</td>
-                    <td id="r4">n/a</td>
-                  </tr>
-                  <tr>
-                    <td>r5 (a2)</td>
-                    <td id="r5">n/a</td>
-                  </tr>
-                  <tr>
-                    <td>r6 (a3)</td>
-                    <td id="r6">n/a</td>
-                  </tr>
-                  <tr>
-                    <td>r7 (a4)</td>
-                    <td id="r7">n/a</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+          <div class="w-80">
+            <b>Memory</b>
+            <canvas
+              class="w-full"
+              width="1024"
+              height="1024"
+              id="memory-canvas"
+            ></canvas>
           </div>
         </div>
-
-        <!-- Right column: display -->
-        <div class="w-full">
-          <h2>Display</h2>
-          <canvas
-            class="w-full"
-            width="48"
-            height="32"
-            id="display-canvas"
-          ></canvas>
-
-          <h2>Memory</h2>
-          <canvas
-            class="w-full"
-            width="1024"
-            height="1024"
-            id="memory-canvas"
-          ></canvas>
-        </div>
       </div>
-    </main>
+
+      <!-- Right column: display -->
+      <div class="h-full overflow-y-auto w-full">
+        <b>Display</b>
+        <canvas
+          class="w-full"
+          width="48"
+          height="32"
+          id="display-canvas"
+        ></canvas>
+      </div>
+    </div>
   </body>
 </html>
