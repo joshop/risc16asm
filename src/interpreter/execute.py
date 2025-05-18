@@ -70,7 +70,7 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
             match op2:
                 case 0b00:
                     rf[rd] = (~(rf[rs] & rf[ro])) & 0xFFFF
-                case 0b11:
+                case 0b01:
                     rf[rd] = rf[rs] & rf[ro]
                 case 0b11:
                     rf[rd] = ~(rf[rs] | rf[ro])
