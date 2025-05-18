@@ -51,19 +51,18 @@
               <td>mem[pc]</td>
               <td id="inst">n/a</td>
             </tr>
+            <tr>
+              <td>speed</td>
+              <td id="clock-speed">n/a</td>
+            </tr>
           </table>
 
           <br />
 
-          <div>
-            <button
-              class="px-3 py-0.5 border"
-              disabled
-              onclick="step();"
-              id="start-btn"
-            >
-              step
-            </button>
+          <div class="flex gap-4">
+            <button disabled onclick="step();" id="step-btn">step</button>
+            <button disabled onclick="play();" id="play-btn">play</button>
+            <button disabled onclick="pause();" id="pause-btn">pause</button>
           </div>
 
           <br />

@@ -21,7 +21,6 @@ export class Display {
     if (addr < 0x4003) {
       this.p[addr - 0x4000] = data;
     } else {
-      console.log('writing to n');
       this.n[addr - 0x4003] = data;
     }
   }

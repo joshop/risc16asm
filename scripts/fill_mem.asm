@@ -8,13 +8,13 @@ li a1, 0xf0f0
 
 start:
   // Start address
-  li a0, 0x3100
+  li a0, 0x4000
 
 loop:
 
   // Flip the bits
   lw a2, 0(a0)
-  // xor a2, a2, a1
+  xor a2, a2, a1
   addi a2, a2, 1
 
   sw a2, 0(a0)

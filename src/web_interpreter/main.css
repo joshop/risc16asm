@@ -12,6 +12,24 @@ a {
   text-underline-offset: 0.2rem;
 }
 
+button {
+  @apply px-3 py-0.5 border;
+  padding: 0.125rem 0.75rem;
+  border: 1px solid #ffffff;
+}
+button:disabled {
+  opacity: 0.6;
+}
+button:hover:enabled {
+  cursor: pointer;
+  background-color: #ffffff40;
+  color: white;
+}
+button:active:enabled {
+  background-color: #ffffff;
+  color: black;
+}
+
 /* Canvas displays */
 /* Make them pixelated */
 canvas {

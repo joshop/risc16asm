@@ -1,7 +1,6 @@
 import { Interpreter } from './interpreter.js';
 import { Display } from './display.js';
 import { $ } from './dom.js';
-import { fmtHex } from './utils.js';
 
 // New display
 const display = new Display();
@@ -25,24 +24,61 @@ const readMachineCode = () => {
       `Uploaded new machine code (${fileReader.result.byteLength} B)`
     );
 
-    $('#start-btn').disabled = false;
+    $('#step-btn').disabled = false;
+    $('#play-btn').disabled = false;
+    $('#pause-btn').disabled = true;
     interp.pc = 0;
     interp.updateUI();
-
-    const nextFrame = () => {
-      // Prime number so we hit all the states
-      for (let i = 0; i < 4093; i++) interp.step();
-      interp.updateUI();
-      display.render();
-      requestAnimationFrame(nextFrame);
-    };
-    nextFrame();
   };
 };
 
+// State
+let playing = true;
+$('#step-btn').disabled = true;
+$('#play-btn').disabled = true;
+$('#pause-btn').disabled = true;
+
+// Handler to advance simulation by a bunch and update display
+const nextFrame = () => {
+  // Prime number so we hit all the states
+  let count = 0;
+  while (true) {
+    const displayUpdated = interp.step();
+
+    // Break once in a while or if display refreshed
+    if (count > 4093) break;
+    if (displayUpdated) break;
+
+    count++;
+  }
+  interp.updateUI();
+  display.render();
+
+  if (playing) requestAnimationFrame(nextFrame);
+};
+window.nextFrame = nextFrame;
+
+// Button handlers
 const step = () => {
   interp.step();
+  interp.updateUI();
+  display.render();
 };
 window.step = step;
+
+const play = () => {
+  playing = true;
+  nextFrame();
+  $('#play-btn').disabled = true;
+  $('#pause-btn').disabled = false;
+};
+window.play = play;
+
+const pause = () => {
+  playing = false;
+  $('#play-btn').disabled = false;
+  $('#pause-btn').disabled = true;
+};
+window.pause = pause;
 
 fileInputEl.addEventListener('change', readMachineCode, false);

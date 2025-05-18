@@ -29,6 +29,10 @@ export class Interpreter {
 
     // IO devices
     this.display = display;
+
+    // Metrics
+    this.lastCycleTime = new Date();
+    this.lastCycleCount = 0;
   }
 
   // Registers
@@ -202,6 +206,18 @@ export class Interpreter {
     for (let i = 1; i <= 7; i++) {
       // $(`#r${i}`).innerText = fmtHex(this.rfr(i));
       $(`#r${i}`).innerText = this.rfr(i).toString().padStart(5);
+    }
+
+    // Update cycle metrics
+    let timeSinceLastCycleCount = new Date() - this.lastCycleTime;
+    if (timeSinceLastCycleCount > 1000) {
+      $('#clock-speed').innerText = `${(
+        (this.cycles - this.lastCycleCount) /
+        timeSinceLastCycleCount
+      ).toFixed(2)} Hz`;
+
+      this.lastCycleCount = this.cycles;
+      this.lastCycleTime = new Date();
     }
   }
 }
