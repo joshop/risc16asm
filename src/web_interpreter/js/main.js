@@ -30,7 +30,8 @@ const readMachineCode = () => {
     interp.updateUI();
 
     const nextFrame = () => {
-      for (let i = 0; i < 4096; i++) interp.step();
+      // Prime number so we hit all the states
+      for (let i = 0; i < 4093; i++) interp.step();
       interp.updateUI();
       display.render();
       requestAnimationFrame(nextFrame);
