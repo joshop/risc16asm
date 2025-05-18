@@ -18,9 +18,10 @@ export class Display {
 
   write(addr, data) {
     if (addr >> 3 !== 0x4000 >> 3) return;
-    if (addr >> 3 < 0x4003) {
+    if (addr < 0x4003) {
       this.p[addr - 0x4000] = data;
     } else {
+      console.log('writing to n');
       this.n[addr - 0x4003] = data;
     }
   }
@@ -31,8 +32,8 @@ export class Display {
 
     for (let row = 0; row < 32; row++) {
       for (let col = 0; col < 48; col++) {
-        let pBit = (this.p[col >> 4] >> row % 16) & 1;
-        let nBit = (this.n[row >> 4] >> col % 16) & 1;
+        let pBit = (this.p[col >> 4] >> col % 16) & 1;
+        let nBit = (this.n[row >> 4] >> row % 16) & 1;
         let pixelIdx = (row * 48 + col) * 4;
 
         const c = pBit && !nBit ? 255 : 0;
