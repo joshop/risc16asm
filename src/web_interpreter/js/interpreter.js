@@ -46,8 +46,10 @@ export class Interpreter {
   }
 
   // Meat of the thing
+  // Returns whether display updates
   step() {
     this.cycles++;
+    let displayUpdated = false;
 
     const inst = this.mem[this.pc];
     let nextPc = (this.pc + 1) & 0xffff; // Default next pc
@@ -79,7 +81,7 @@ export class Interpreter {
         this.rfw(rd, ~(this.rfr(rs) & immImm) & 0xffff);
       }
       this.pc = nextPc;
-      return;
+      return false;
     }
 
     // Handle other instruction types
@@ -171,12 +173,12 @@ export class Interpreter {
         this.mem[storeAddr] = storeValue;
 
         // Notify output devices
-        this.display?.write(storeAddr, storeValue);
-
+        displayUpdated = this.display?.write(storeAddr, storeValue);
         break;
     }
 
     this.pc = nextPc;
+    return displayUpdated;
   }
 
   // UI refresh!
@@ -209,12 +211,13 @@ export class Interpreter {
     }
 
     // Update cycle metrics
-    let timeSinceLastCycleCount = new Date() - this.lastCycleTime;
-    if (timeSinceLastCycleCount > 1000) {
+    let timeSinceLastCycleCount = (new Date() - this.lastCycleTime) / 1000;
+    if (timeSinceLastCycleCount > 1) {
       $('#clock-speed').innerText = `${(
         (this.cycles - this.lastCycleCount) /
-        timeSinceLastCycleCount
-      ).toFixed(2)} Hz`;
+        timeSinceLastCycleCount /
+        1000
+      ).toFixed(2)} KHz`;
 
       this.lastCycleCount = this.cycles;
       this.lastCycleTime = new Date();

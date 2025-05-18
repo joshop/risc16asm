@@ -3,7 +3,7 @@ import { displayCanvasCtx } from './dom.js';
 export class Display {
   constructor() {
     this.p = new Uint16Array([0xaaaa, 0xaaaa, 0xaaaa]);
-    this.n = new Uint16Array([0xaaaa, 0xaaaa]);
+    this.n = new Uint16Array([0xffff, 0xaaaa]);
   }
 
   // Write to registers
@@ -17,12 +17,13 @@ export class Display {
   // 0x4004: row 1
 
   write(addr, data) {
-    if (addr >> 3 !== 0x4000 >> 3) return;
+    if (addr >> 3 !== 0x4000 >> 3) return false;
     if (addr < 0x4003) {
       this.p[addr - 0x4000] = data;
     } else {
       this.n[addr - 0x4003] = data;
     }
+    return true;
   }
 
   render() {

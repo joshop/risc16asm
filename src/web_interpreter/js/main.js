@@ -38,6 +38,8 @@ $('#step-btn').disabled = true;
 $('#play-btn').disabled = true;
 $('#pause-btn').disabled = true;
 
+let lastCycleCount = 0;
+
 // Handler to advance simulation by a bunch and update display
 const nextFrame = () => {
   // Prime number so we hit all the states
@@ -46,11 +48,15 @@ const nextFrame = () => {
     const displayUpdated = interp.step();
 
     // Break once in a while or if display refreshed
-    if (count > 4093) break;
-    if (displayUpdated) break;
+    // if (count > 4096) break;
+    if (displayUpdated && count > 4096) {
+      console.log(interp.cycles - lastCycleCount);
+      break;
+    }
 
     count++;
   }
+  lastCycleCount = interp.cycles;
   interp.updateUI();
   display.render();
 
