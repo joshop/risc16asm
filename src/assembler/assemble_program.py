@@ -141,14 +141,14 @@ def get_base_insts(
                         assert (
                             len(args) == 2
                         ), f"Expected 2 args for .def directive, got {len(args)}"
-                        Y, X = args[0], parse_const(args[1], 16)
+                        Y, X = args[0], parse_const(args[1], 16, labels, vars)
                         vars[Y] = X
 
                     case ".addr":
                         assert (
                             len(args) == 1
                         ), f"Expected 1 args for .addr directive, got {len(args)}"
-                        X = parse_const(args[0], 16)
+                        X = parse_const(args[0], 16, labels, vars)
                         cur_addr = X
 
                     case ".bin":

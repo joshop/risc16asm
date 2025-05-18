@@ -18,11 +18,16 @@ export class Display {
 
   write(addr, data) {
     if (addr >> 3 !== 0x4000 >> 3) return false;
+
+    console.log(`writing data ${data} to addr ${addr}`);
     if (addr < 0x4003) {
       this.p[addr - 0x4000] = data;
-    } else {
+    } else if (addr < 0x4005) {
       this.n[addr - 0x4003] = data;
+    } else {
+      return false;
     }
+
     return true;
   }
 

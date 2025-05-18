@@ -30,6 +30,8 @@ const readMachineCode = () => {
     interp.pc = 0;
     interp.cycle = 0;
     interp.updateUI();
+
+    nextFrame();
   };
 };
 
