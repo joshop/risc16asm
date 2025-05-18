@@ -9,7 +9,7 @@
     <link rel="icon" href="https://fav.farm/🖥️" />
 
     <!-- Styles -->
-    <link rel="stylesheet" href="https://unpkg.com/bamboo.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="main.css" />
 
     <!-- Scripts -->
@@ -19,8 +19,10 @@
   <body class="w-full">
     <main class="w-full">
       <!-- Header -->
-      <h1>RISC-16 web interpreter</h1>
-      <a href="https://github.com/joshop/risc16asm">GitHub</a>
+      <h1 class="mb-4">
+        <b>RISC-16 web interpreter</b>
+        <a href="https://github.com/joshop/risc16asm">(Github)</a>
+      </h1>
 
       <!-- Columns -->
       <div class="grid grid-cols-2 gap-4 w-full">
@@ -28,14 +30,16 @@
         <div>
           <!-- File upload -->
           <div>
-            <h2>Upload machine code</h2>
-            <input type="file" id="file-input" />
+            <b>Upload machine code</b><br />
+            <input class="border px-3 py-1 mt-1" type="file" id="file-input" />
           </div>
+
+          <br />
 
           <!-- Readout -->
           <div>
-            <h2>Processor state</h2>
-            <table>
+            <b>Processor state</b>
+            <table class="border-spacing-x-8 border-separate">
               <tr>
                 <td>cycle</td>
                 <td id="cycle">n/a</td>
@@ -50,19 +54,25 @@
               </tr>
             </table>
 
+            <br />
+
             <div>
-              <button disabled onclick="step();" id="start-btn">step</button>
+              <button
+                class="px-3 py-0.5 border"
+                disabled
+                onclick="step();"
+                id="start-btn"
+              >
+                step
+              </button>
             </div>
+
+            <br />
 
             <!-- Register values -->
             <div>
-              <h3>Registers</h3>
-              <table id="reg-table">
-                <thead>
-                  <tr>
-                    <th>Register</th>
-                  </tr>
-                </thead>
+              <b>Registers</b>
+              <table id="reg-table" class="border-spacing-x-8 border-separate">
                 <tbody>
                   <tr>
                     <td>r1 (ra)</td>
