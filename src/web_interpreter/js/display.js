@@ -1,11 +1,9 @@
 import { displayCanvasCtx } from './dom.js';
 
 export class Display {
-  constructor(interp) {
+  constructor() {
     this.p = new Uint16Array([0xaaaa, 0xaaaa, 0xaaaa]);
     this.n = new Uint16Array([0xaaaa, 0xaaaa]);
-
-    this.interp = interp;
   }
 
   // Write to registers

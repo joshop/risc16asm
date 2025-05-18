@@ -21,11 +21,14 @@ const LOAD = 0b00010;
 const STORE = 0b00011;
 
 export class Interpreter {
-  constructor() {
+  constructor(display) {
     this.mem = new Uint16Array(1 << 16);
     this.pc = 0;
     this.regs = new Uint16Array(8);
     this.cycles = 0;
+
+    // IO devices
+    this.display = display;
   }
 
   // Registers
@@ -159,7 +162,13 @@ export class Interpreter {
         break;
 
       case STORE:
-        this.mem[this.rfr(rs) + immStore] = this.rfr(ro) & 0xffff;
+        let storeAddr = this.rfr(rs) + immStore;
+        let storeValue = this.rfr(ro) & 0xffff;
+        this.mem[storeAddr] = storeValue;
+
+        // Notify output devices
+        this.display?.write(storeAddr, storeValue);
+
         break;
     }
 

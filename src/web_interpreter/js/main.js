@@ -3,13 +3,13 @@ import { Display } from './display.js';
 import { $ } from './dom.js';
 import { fmtHex } from './utils.js';
 
-// New interpreter
-const interp = new Interpreter();
-window.interp = interp;
-
 // New display
-const display = new Display(interp);
+const display = new Display();
 window.display = display;
+
+// New interpreter
+const interp = new Interpreter(display);
+window.interp = interp;
 
 // Listen for file upload and change system mem
 const fileInputEl = $('#file-input');
@@ -30,7 +30,7 @@ const readMachineCode = () => {
     interp.updateUI();
 
     const nextFrame = () => {
-      for (let i = 0; i < 1; i++) interp.step();
+      for (let i = 0; i < 4096; i++) interp.step();
       interp.updateUI();
       display.render();
       requestAnimationFrame(nextFrame);
