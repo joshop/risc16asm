@@ -7,6 +7,7 @@ Parse a full program into machine code.
 import re
 import os
 import sys
+import struct
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -147,13 +148,24 @@ def get_base_insts(
                     case ".addr":
                         assert (
                             len(args) == 1
-                        ), f"Expected 1 args for .addr directive, got {len(args)}"
+                        ), f"Expected 1 arg for .addr directive, got {len(args)}"
                         X = parse_const(args[0], 16, labels, vars)
                         cur_addr = X
 
                     case ".bin":
-                        # TODO
-                        pass
+                        assert (
+                            len(args) == 1
+                        ), f"Expected 1 args for .bin directive, got {len(args)}"
+                        raw_path = os.path.join(os.path.dirname(filepath), args[0])
+                        with open(raw_path, "rb") as fin:
+                            subprog_bin = fin.read()
+                            subprog_words = struct.unpack(
+                                f"<{len(subprog_bin) // 2}H", subprog_bin
+                            )
+                            base_insts.append(
+                                [".bin", subprog_words, line_idx, cur_addr, filepath]
+                            )
+                            cur_addr += len(subprog_words)
 
                     case ".macro":
                         # Read the entire macro
@@ -225,7 +237,7 @@ def assemble_program(prog: str, filepath: str | None = None) -> list[int]:
             raise e
 
         print(
-            f"line {line_idx+1:>4} | addr {addr:>5} | op {op:>8} | {', '.join(args):<28.28} | "
+            f"line {line_idx+1:>4} | addr {addr:>5} | op {op:>8} | {', '.join(map(str, args)):<28.28} | "
             f"h'{words[0]:04x} | "
             # f"b'{words[0]:016b} | "
             f"{filepath}"

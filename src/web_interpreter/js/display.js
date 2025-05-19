@@ -65,7 +65,7 @@ export class Display {
         brightnessSum += this.pixelHistory[i][pixelIdx];
       }
 
-      let c = Math.floor((1 - (brightnessSum / n) * 48) * 255);
+      let c = Math.floor((1 - (brightnessSum / n) * 48 * 32) * 255);
       imageBuffer[pixelIdx * 4 + 0] = c;
       imageBuffer[pixelIdx * 4 + 1] = c;
       imageBuffer[pixelIdx * 4 + 2] = c;

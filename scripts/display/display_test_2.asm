@@ -13,15 +13,28 @@ sw zero, 2(a0)
 sw zero, 3(a0)
 sw zero, 4(a0)
 
-loop:
-  // draw_frame(C0)
+// Address of frame to draw
+start:
   li a0, FBUF
+  li a1, (FBUF + 96*256)
+
+loop:
+  // draw_frame(FBUF)
   call draw_frame
-  
   ecall 1
+
+  // FBUF += 96 (next frame)
+  addi a0, a0, 96
+
+  // Are we at the end?
+  sub a0, a0, a1
+  bp a0, start
+  add a0, a0, a1
+
   j loop
 
-halt
+end:
+  halt
 
 
 // Libraries and stuff
@@ -31,99 +44,5 @@ halt
 // 48x32 is 48x2 words = 96 words
 .addr 0x5000
 FBUF:
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
+  // .bin bad_apple/badapple.bin
+  .bin bad_apple/badapple.bin
