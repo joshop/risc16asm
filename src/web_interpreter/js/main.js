@@ -54,7 +54,7 @@ const nextFrame = () => {
       break;
     }
     // Break once in a while or if display refreshed
-    if (displayUpdated || count > 4092) {
+    if (displayUpdated || cycle >= 4093) {
       break;
     }
 

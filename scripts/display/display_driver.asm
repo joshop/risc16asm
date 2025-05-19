@@ -100,6 +100,7 @@ display_driver:
     lw a4, 5(sp)
     addi sp, sp, 7
 
+    ecall 1
     j display_driver
 
 end:
