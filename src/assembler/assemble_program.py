@@ -121,7 +121,7 @@ def get_base_insts(
                         with open(raw_path) as fin:
                             subprog_asm = fin.read()
 
-                        insert_subprogram(subprog_asm, args[0])
+                        insert_subprogram(subprog_asm, raw_path)
 
                     case ".word":
                         assert (
@@ -160,12 +160,6 @@ def get_base_insts(
                         og_line_idx = line_idx
                         macro_pattern = line.split(" ", 1)[1]
 
-                        # No duplicate macros
-                        if macro_pattern in macros:
-                            raise SyntaxError(
-                                f"Duplicate macro '{macro_pattern}' on line {og_line_idx}"
-                            )
-
                         # Get all contents before .endmacro
                         replacement_lines = []
                         line_idx += 1
@@ -179,8 +173,13 @@ def get_base_insts(
                                 f"No matching .endmacro found for .macro directive on line {og_line_idx}"
                             )
 
-                        # Save this macro
-                        macros[macro_pattern] = "\n".join(replacement_lines)
+                        # Save this macro if it doesn't exist
+                        if macro_pattern in macros:
+                            print(
+                                f"[WARNING] Duplicate macro '{macro_pattern}' on line {og_line_idx}, ignored"
+                            )
+                        else:
+                            macros[macro_pattern] = "\n".join(replacement_lines)
 
                     case _:
                         # Standard instruction
@@ -192,7 +191,7 @@ def get_base_insts(
 
         except Exception as e:
             raise SyntaxError(
-                f"Could not parse line '{lines[line_idx].strip()}' at line {line_idx+1} ({filepath}):\n  {e}"
+                f"Could not parse line '{lines[line_idx].strip()}' on line {line_idx+1} ({filepath}):\n  {e}"
             )
 
     return base_insts, labels, vars, macros, cur_addr
@@ -221,7 +220,7 @@ def assemble_program(prog: str, filepath: str | None = None) -> list[int]:
 
         except Exception as e:
             print(
-                f"Error assembling '{op} {', '.join(args)}' at line {line_idx+1} ({filepath}):\n  {e}"
+                f"Error assembling '{op} {', '.join(args)}' on line {line_idx+1} ({filepath}):\n  {e}"
             )
             raise e
 
