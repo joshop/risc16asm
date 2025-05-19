@@ -25,6 +25,7 @@ class OPCODES:
     BR = ["bz", "bnz", "bp", "bnp"]
     LOAD = ["lw"]
     STORE = ["sw"]
+    ECALL = ["ecall"]
 
 
 OPCODE_DICT = {
@@ -36,6 +37,7 @@ OPCODE_DICT = {
     "br": OPCODES.BR,
     "load": OPCODES.LOAD,
     "store": OPCODES.STORE,
+    "ecall": OPCODES.ECALL,
 }
 BASE_OPCODES = sum(OPCODE_DICT.values(), [])
 
@@ -59,12 +61,12 @@ def base_parse_line(
     # .word directive
     if op == ".word":
         assert len(args) == 1, "parse_line: expected one arg for .word directive"
-        return [parse_const(args[0], 16)]
+        return [parse_const(args[0], 16, labels, vars)]
 
     # .dword directive
     if op == ".dword":
         assert len(args) == 2, "parse_line: expected one arg for .dword directive"
-        dword = parse_const(args[0], 32)
+        dword = parse_const(args[0], 32, labels, vars)
         return [(dword & 0xFFFF0000) >> 16, dword & 0xFFFF]
 
     # Unmatched .macro (should get caught by program parser)
@@ -160,7 +162,7 @@ def parse_base_inst(op, args, labels: dict, vars: dict, cur_addr: int) -> int:
     if op in OPCODES.ALU_SH:
         assert len(args) == 3, f"Expected 3 args for {op} instruction, got {len(args)}"
         rd, rs = map(reg_idx, args[:2])
-        shamt = parse_const(args[2], 3)
+        shamt = parse_const(args[2], 3, labels, vars)
 
         sd = {
             "sl": 0,
@@ -173,6 +175,11 @@ def parse_base_inst(op, args, labels: dict, vars: dict, cur_addr: int) -> int:
         assert len(args) == 2, f"Expected 2 args for {op} instruction, got {len(args)}"
         rd, rs = map(reg_idx, args)
         return (rs << 8) + (rd << 5)
+
+    if op in OPCODES.ECALL:
+        assert len(args) == 1, f"Expected 1 arg for {op} instruction, got {len(args)}"
+        imm = parse_const(args[0], 5, labels, vars)
+        return imm
 
     if op in OPCODES.BR:
         assert len(args) == 2, f"Expected 2 args for {op} instruction, got {len(args)}"

@@ -39,7 +39,7 @@ A program consists of a sequence of the following separated by newlines:
 - Comments of the form `// comment text ended by a newline`
 - Whitespace (which is ignored)
 - Assembler directives
-- Macros (previously defined)
+- Macros
 
 Assembler directives include the following:
 
@@ -72,6 +72,11 @@ main:
 myfunction:
   // ... do something
 ```
+
+## Syntax notes
+
+- `ecall <code>` can be used to trigger special hardware functions. They get encoded as a `jalr` instruction with nonzero immediate. The web interpreter is currently configured for the following ecall codes:
+  - `1`: refresh display
 
 ## TODO
 

@@ -46,6 +46,7 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
 
     imm_imm = parse_imm(((inst & (0b111 << 11)) >> 6) + (inst & (0b11111)), 8)
     imm_lui = parse_imm(((inst & (0b111 << 8)) >> 3) + (inst & 0b11111), 8)
+    imm_jalr = parse_imm(inst & 0b11111, 5)
     imm_br = parse_imm(inst & 0b11111111, 8)
     imm_load = parse_imm(inst & 0b11111, 5)
     imm_store = parse_imm(((inst & (0b111 << 5)) >> 3) + (inst & 0b11), 5)
@@ -97,8 +98,13 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
                 rf[rd] = rf[rs] >> shamt
 
         case iType.JUMP:
-            next_pc = rf[rs]
-            rf[rd] = pc + 1
+            if imm_jalr == 0:
+                next_pc = rf[rs]
+                rf[rd] = pc + 1
+            else:
+                # Python interpreter does not support ecalls
+                print(f"ecall raised at pc={pc}, code={imm_jalr}")
+                pass
 
         case iType.BR_BZ:
             if rf[rs] == 0:

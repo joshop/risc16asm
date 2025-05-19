@@ -67,6 +67,7 @@ export class Interpreter {
     // Extract immediate values
     const immImm = parseImm(((inst >> 6) & 0b11100000) + (inst & 0b11111), 8);
     const immLui = parseImm(((inst >> 3) & 0b11100000) + (inst & 0b11111), 8);
+    const immJalr = parseImm(inst & 0b11111, 5);
     const immBr = parseImm(inst & 0b11111111, 8);
     const immLoad = parseImm(inst & 0b11111, 5);
     const immStore = parseImm(((inst >> 3) & 0b11100) + (inst & 0b11), 5);
@@ -135,8 +136,15 @@ export class Interpreter {
         break;
 
       case JUMP:
-        nextPc = this.rfr(rs);
-        this.rfw(rd, this.pc + 1);
+        if (immJalr === 0) {
+          nextPc = this.rfr(rs);
+          this.rfw(rd, this.pc + 1);
+        } else if (immJalr === 1) {
+          // ecall 1: refresh display
+          this.display.render();
+          displayUpdated = true;
+        }
+
         break;
 
       case BR_BZ:
@@ -175,7 +183,7 @@ export class Interpreter {
         this.mem[storeAddr] = storeValue;
 
         // Notify output devices
-        displayUpdated = this.display?.write(storeAddr, storeValue);
+        this.display?.write(storeAddr, storeValue);
         break;
     }
 
