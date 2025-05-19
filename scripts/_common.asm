@@ -15,8 +15,8 @@ addi \1, \1, (\2) & 0xff
 .endmacro
 
 // Logical things
-// Negate (flip all bits)
-.macro neg (\w+), (\w+)
+// Not (flip all bits)
+.macro not (\w+), (\w+)
 nand \1, \2, \2
 .endmacro
 

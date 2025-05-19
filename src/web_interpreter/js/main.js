@@ -31,7 +31,7 @@ const readMachineCode = () => {
     interp.cycle = 0;
     interp.updateUI();
 
-    nextFrame();
+    // nextFrame();
   };
 };
 
@@ -54,7 +54,7 @@ const nextFrame = () => {
       break;
     }
     // Break once in a while or if display refreshed
-    if (displayUpdated || count > 4096) {
+    if (displayUpdated || count > 4092) {
       break;
     }
 

@@ -164,7 +164,9 @@ export class Interpreter {
         break;
 
       case LOAD:
-        this.rfw(rd, this.mem[this.rfr(rs) + immLoad]);
+        let loadAddr = this.rfr(rs) + immLoad;
+        let loadValue = this.mem[loadAddr];
+        this.rfw(rd, loadValue);
         break;
 
       case STORE:
@@ -190,7 +192,7 @@ export class Interpreter {
         let bit = (this.mem[wordIdx] >> bitIdx) & 1;
         let pixelIdx = (wordIdx * 16 + bitIdx) * 4;
 
-        const c = bit ? 255 : 0;
+        const c = bit ? 0 : 255;
         imageBuffer[pixelIdx] = c;
         imageBuffer[pixelIdx + 1] = c;
         imageBuffer[pixelIdx + 2] = c;

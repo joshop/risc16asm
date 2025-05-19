@@ -41,7 +41,7 @@ def main():
     interp.load_program(prog)
 
     while (not interp.is_halted()) and (interp.cycles < args.max_cycles):
-        if interp.cycles % 16 == 0:
+        if True:  # interp.cycles % 16 == 0:
             print(interp.dump_state())
         interp.step()
 

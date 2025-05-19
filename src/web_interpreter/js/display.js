@@ -1,4 +1,5 @@
 import { displayCanvasCtx } from './dom.js';
+import { fmtHex } from './utils.js';
 
 export class Display {
   constructor() {
@@ -19,7 +20,6 @@ export class Display {
   write(addr, data) {
     if (addr >> 3 !== 0x4000 >> 3) return false;
 
-    console.log(`writing data ${data} to addr ${addr}`);
     if (addr < 0x4003) {
       this.p[addr - 0x4000] = data;
     } else if (addr < 0x4005) {
@@ -41,7 +41,7 @@ export class Display {
         let nBit = (this.n[row >> 4] >> row % 16) & 1;
         let pixelIdx = (row * 48 + col) * 4;
 
-        const c = pBit && !nBit ? 255 : 0;
+        const c = pBit && !nBit ? 0 : 255;
         imageBuffer[pixelIdx] = c;
         imageBuffer[pixelIdx + 1] = c;
         imageBuffer[pixelIdx + 2] = c;
