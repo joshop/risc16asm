@@ -1,0 +1,129 @@
+// The meaty test
+.include ../_common.asm
+.def C0, 0x4000
+
+// Initialize stack ptr
+li sp, 0xffff
+
+// Reset everything to zero
+li a0, C0
+sw zero, 0(a0)
+sw zero, 1(a0)
+sw zero, 2(a0)
+sw zero, 3(a0)
+sw zero, 4(a0)
+
+loop:
+  // draw_frame(C0)
+  li a0, FBUF
+  call draw_frame
+  
+  ecall 1
+  j loop
+
+halt
+
+
+// Libraries and stuff
+.include display_driver.asm
+
+// Frame buffer lives here
+// 48x32 is 48x2 words = 96 words
+.addr 0x5000
+FBUF:
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff
+  .word 0x00ff
+  .word 0xff00
+  .word 0xff00
+  .word 0x00ff

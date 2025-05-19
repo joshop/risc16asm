@@ -81,3 +81,4 @@ myfunction:
 ## TODO
 
 - [ ] Fix include file path tracing
+- [ ] Figure out how context stuff works with respect to `.include` directives and document it

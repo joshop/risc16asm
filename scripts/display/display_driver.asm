@@ -1,37 +1,27 @@
-// Make a thing move across the screen
 .include ../_common.asm
-
-.def C0, 0x4000
-
-// Initialize stack ptr
-li sp, 0xffff
-li ra, end
-
-// Reset everything to zero
-li a0, C0
-sw zero, 0(a0)
-sw zero, 1(a0)
-sw zero, 2(a0)
-sw zero, 3(a0)
-sw zero, 4(a0)
 
 // Display driver
 // Read from frame buffer and manipulate IO to make image
-display_driver:
+// args:
+//    a0: address of frame buffer
+
+.def C0, 0x4000
+
+draw_frame:
   // Save registers onto stack
-  addi sp, sp, -7
+  addi sp, sp, -6
   sw ra, 0(sp)
   sw a0, 1(sp)
   sw a1, 2(sp)
   sw a2, 3(sp)
   sw a3, 4(sp)
   sw a4, 5(sp)
+
+  mv a4, a0               // a4 <- frame buffer base address
+  li a1, 93
+  add a1, a1, a4          // a1 <- current frame buffer word
   
-  li a1, 93               // a1 <- frame buffer index
-  li a4, FBUF
-  add a1, a1, a4
-  
-  li a0, C0               // a0 <- C0 (memory base)
+  li a0, C0               // a0 <- C0 (IO base)
   li a3, C0 + 4           // a3 <- Rx (row memory base)
 
   // Initialize row outputs
@@ -71,7 +61,8 @@ display_driver:
       not a2, a2
 
     // If index == 0, end
-    li a4, FBUF
+    // a4 <- FBUF (saved at 1(sp))
+    lw a4, 1(sp)
     sub a1, a1, a4
     bz a1, dd_end
     add a1, a1, a4
@@ -80,7 +71,7 @@ display_driver:
     bnz a2, dd_loop_outer
 
     // Shifted out of range (set previous row)
-    // ASSERT: this executes only when we get to the upper half of display
+    // ASSERTION: this executes only when we get to the upper half of display
     li a2, 0xffff
     sw a2, 4(a0)          // Reset lower half of screen
     li a2, 0x7fff
@@ -98,111 +89,6 @@ display_driver:
     lw a2, 3(sp)
     lw a3, 4(sp)
     lw a4, 5(sp)
-    addi sp, sp, 7
+    addi sp, sp, 6
 
-    ecall 1
-    j display_driver
-
-end:
-  halt
-
-// Frame buffer lives here
-// 48x32 is 48x2 words = 96 words
-.addr 0x5000
-FBUF:
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
-  .word 0x00ff
-  .word 0xff00
-  .word 0xff00
-  .word 0x00ff
+    ret
