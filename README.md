@@ -1,6 +1,6 @@
 # RISC-16
 
-Assembler and emulator for a custom 16-bit instruction set.
+Assembler, emulator, and HDL for a custom 16-bit RISC-based instruction set.
 
 ## Usage
 
@@ -73,10 +73,14 @@ myfunction:
   // ... do something
 ```
 
-## Syntax notes
+Notes on syntax:
 
 - `ecall <code>` can be used to trigger special hardware functions. They get encoded as a `jalr` instruction with nonzero immediate. The web interpreter is currently configured for the following ecall codes:
   - `1`: refresh display
+
+## HDL
+
+A SystemVerilog implementation of a CPU running this assembly exists in `src/hdl/`. Testbenches for this implementation exist in `src/hdl_sim/`.
 
 ## TODO
 
