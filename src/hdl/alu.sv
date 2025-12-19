@@ -14,7 +14,7 @@ module alu (
   output logic [15:0] out
 );
   always_comb begin
-    case (func)
+    case (alu_func)
       NAND: out = ~(a & b);
       AND: out = a & b;
       NOR: out = ~(a | b);
@@ -22,8 +22,8 @@ module alu (
       ADD: out = a + b;
       SUB: out = a - b;
       XOR: out = a ^ b;
-      SL: out = a << (b & 'b11111);
-      SR: out = a >> (b & 'b11111);
+      SL: out = a << b[4:0];
+      SR: out = a >> b[4:0];
     endcase
   end
 endmodule

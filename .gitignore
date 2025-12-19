@@ -8,3 +8,6 @@
 
 # Python
 **/__pycache__/
+
+# Build directory for HDL simulations
+src/hdl_sim/sim_build/

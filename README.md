@@ -80,7 +80,7 @@ Notes on syntax:
 
 ## HDL
 
-A SystemVerilog implementation of a CPU running this assembly exists in `src/hdl/`. Testbenches for this implementation exist in `src/hdl_sim/`.
+A SystemVerilog implementation of a CPU running this assembly exists in `src/hdl/`. Testbenches for this implementation are in `src/hdl_sim/`.
 
 ## TODO
 
