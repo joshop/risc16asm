@@ -44,12 +44,12 @@ def execute(pc: int, rf: RegFile, mem: list[int]):
     op5 = (inst & (0b11111 << 11)) >> 11
     op2 = inst & (0b11)
 
-    imm_imm = parse_imm(((inst & (0b111 << 11)) >> 6) + (inst & (0b11111)), 8)
-    imm_lui = parse_imm(((inst & (0b111 << 8)) >> 3) + (inst & 0b11111), 8)
-    imm_jalr = parse_imm(inst & 0b11111, 5)
-    imm_br = parse_imm(inst & 0b11111111, 8)
-    imm_load = parse_imm(inst & 0b11111, 5)
-    imm_store = parse_imm(((inst & (0b111 << 5)) >> 3) + (inst & 0b11), 5)
+    imm_imm = parse_imm(((inst & (0b111 << 11)) >> 6) + (inst & (0b11111)), 8)  # { inst[13:11], inst[4:0] }
+    imm_lui = parse_imm(((inst & (0b111 << 8)) >> 3) + (inst & 0b11111), 8)     # { inst[10:8], inst[4:0] }
+    imm_jalr = parse_imm(inst & 0b11111, 5)                                     # { inst[4:0] }
+    imm_br = parse_imm(inst & 0b11111111, 8)                                    # { inst[7:0] }
+    imm_load = parse_imm(inst & 0b11111, 5)                                     # { inst[4:0] }
+    imm_store = parse_imm(((inst & (0b111 << 5)) >> 3) + (inst & 0b11), 5)      # { inst[7:5], inst[1:0] }
 
     # IMM-TYPE
     if op_imm in [iTypeImm.ADDI, iTypeImm.NANDI]:

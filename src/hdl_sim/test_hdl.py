@@ -22,23 +22,22 @@ HDL_TOPLEVEL = "alu"
 async def test_module(dut):
     """cocotb test for the lazy mult module"""
     dut._log.info("Starting...")
-    cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
 
     testcases = [
-        (0, lambda a, b: ~(a & b)),                 # NAND
-        (1, lambda a, b: (a & b)),                  # AND
-        (2, lambda a, b: ~(a | b)),                 # NOR
-        (3, lambda a, b: (a | b)),                  # OR
-        (4, lambda a, b: (a + b)),                  # ADD
-        (5, lambda a, b: (a - b)),                  # SUB
-        (6, lambda a, b: (a ^ b)),                  # XOR
-        (7, lambda a, b: (a << (b & 0b11111))),     # SL
-        (8, lambda a, b: (a >> (b & 0b11111))),     # SR
+        (0, (0, 0, 0, 0, 0, 1, 0, 0), lambda a, b: ~(a & b)),                 # NAND
+        (1, (0, 0, 1, 0, 0, 1, 0, 0), lambda a, b: (a & b)),                  # AND
+        (2, (1, 1, 1, 0, 0, 1, 0, 0), lambda a, b: ~(a | b)),                 # NOR
+        (3, (1, 1, 0, 0, 0, 1, 0, 0), lambda a, b: (a | b)),                  # OR
+        (4, (0, 0, 0, 1, 0, 0, 0, 0), lambda a, b: (a + b)),                  # ADD
+        (5, (0, 1, 0, 1, 0, 0, 0, 0), lambda a, b: (a - b)),                  # SUB
+        (6, (0, 0, 0, 0, 0, 0, 1, 0), lambda a, b: (a ^ b)),                  # XOR
+        (7, (0, 0, 0, 0, 1, 0, 0, 0), lambda a, b: (a << 1)),     # SL
+        (8, (0, 0, 0, 0, 1, 0, 0, 1), lambda a, b: (a >> 1))     # SR
     ]
 
     # Test each operation in turn
-    for alu_func, test_func in testcases:
-        dut.alu_func.value = alu_func
+    for alu_func, ctrl_sigs, test_func in testcases:
+        # dut.alu_func.value = alu_func
 
         for a in tqdm(
             random.sample(range(2**16), k=100), ncols=80,
@@ -47,6 +46,15 @@ async def test_module(dut):
             for b in random.sample(range(2**16), k=100):
                 dut.a.value = a
                 dut.b.value = b
+                dut.is_neg_a.value = ctrl_sigs[0]
+                dut.is_neg_b.value = ctrl_sigs[1]
+                dut.is_neg_out.value = ctrl_sigs[2]
+                dut.is_add_sub.value = ctrl_sigs[3]
+                dut.is_shift.value = ctrl_sigs[4]
+                dut.is_nand.value = ctrl_sigs[5]
+                dut.is_xor.value = ctrl_sigs[6]
+                dut.shift_dir.value = ctrl_sigs[7]
+
                 await Timer(10, "ns")
 
                 exp_ans = test_func(a, b) & 0xFFFF
