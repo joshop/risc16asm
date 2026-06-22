@@ -19,7 +19,7 @@ module alu_shifter (
   input wire shift_dir,
   output logic [15:0] out
 );
-  // shit_dir is 0 for left shift, 1 for right shift
+  // shift_dir is 0 for left shift, 1 for right shift
   assign out = shift_dir ? (a >> 1) : (a << 1);
 endmodule
 

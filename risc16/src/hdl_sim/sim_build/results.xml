@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1766214431" />
+    <testcase name="test_module" classname="test_hdl" file="/home/willi/coding/ee/risc16asm/src/hdl_sim/test_hdl.py" lineno="21" time="8.668006896972656" sim_time_ns="900000.001" ratio_time="103830.09747192627" />
+  </testsuite>
+</testsuites>
