@@ -1,8 +1,8 @@
-// Registers of various sizes
+// Tri-state register of paramaterizable size
 
 `default_nettype none
 
-module register #(
+module tri_reg #(
   parameter integer WIDTH
 ) (
   input wire clk,
